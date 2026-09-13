@@ -22,5 +22,6 @@
     <div class="footer-bottom"><div class="container">© <?= date('Y') ?> Nhóm 6 Tech Store · Đồ án Lập trình Web</div></div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= $basePath ?>/assets/js/product-search.js"></script>
 </body>
 </html>
