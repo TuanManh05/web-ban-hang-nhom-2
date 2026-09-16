@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/Cart.php';
+require_once __DIR__ . '/../middleware/Security.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+Security::startSession();
 
 $pageTitle = 'Giỏ hàng';
 
@@ -15,16 +14,12 @@ $pageTitle = 'Giỏ hàng';
 $selfPath = 'cart.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $token = (string) ($_POST['csrf_token'] ?? '');
-    if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) {
-        http_response_code(419);
-        exit('Phiên làm việc đã hết hạn. Vui lòng tải lại trang.');
-    }
+    Security::verifyCsrf();
     $action = $_POST['action'] ?? '';
     $productId = (int) ($_POST['product_id'] ?? 0);
     $result = null;
 
-    switch ($action) {
+    switch ($action) {    
         case 'add':
             $quantity = max(1, (int) ($_POST['quantity'] ?? 1));
             $result = Cart::add($productId, $quantity);
