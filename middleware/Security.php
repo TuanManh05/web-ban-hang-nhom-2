@@ -10,7 +10,7 @@ declare(strict_types=1);
 final class Security
 {
     // Tự động đăng xuất nếu không hoạt động quá 30 phút
-    private const INACTIVITY_TIMEOUT = 1800;
+    private const INACTIVITY_TIMEOUT = 10;
 
     /**
      * Khởi tạo session đúng 1 cách duy nhất trong toàn dự án.
