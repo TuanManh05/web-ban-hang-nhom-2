@@ -25,7 +25,11 @@ $items = Cart::getItems();
 
 // Không cho thanh toán khi giỏ hàng trống
 if (empty($items)) {
-    header('Location: ' . $basePath . '/views/cart.php?error=' . urlencode('Giỏ hàng đang trống, không thể thanh toán.'));
+    $_SESSION['flash'] = [
+        'type' => 'danger',
+        'text' => 'Giỏ hàng đang trống, không thể thanh toán.',
+    ];
+    header('Location: ' . $basePath . '/views/cart.php');
     exit;
 }
 
@@ -45,9 +49,6 @@ $old = $_SESSION['checkout_old'] ?? [
 ];
 unset($_SESSION['checkout_errors'], $_SESSION['checkout_old']);
 
-// Một số lỗi (vd. giỏ hàng trống, lỗi hệ thống) được OrderController gửi qua query string
-$generalError = $_GET['error'] ?? null;
-
 $total = Cart::getTotalAmount();
 
 require __DIR__ . '/partials/header.php';
@@ -55,9 +56,7 @@ require __DIR__ . '/partials/header.php';
 <section class="container py-5">
     <h1 class="h3 fw-bold mb-4">Thanh toán</h1>
 
-    <?php if ($generalError): ?>
-        <div class="alert alert-danger"><?= htmlspecialchars($generalError, ENT_QUOTES, 'UTF-8') ?></div>
-    <?php elseif (!empty($errors)): ?>
+    <?php if (!empty($errors)): ?>
         <div class="alert alert-danger">
             <ul class="mb-0 ps-3">
                 <?php foreach ($errors as $err): ?>

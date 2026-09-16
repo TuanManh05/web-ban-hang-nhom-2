@@ -56,22 +56,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($result !== null) {
-        $separator = str_contains($redirectTo, '?') ? '&' : '?';
-        $redirectTo .= $separator . ($result['success'] ? 'msg=' : 'error=') . urlencode($result['message']);
+        $_SESSION['flash'] = [
+            'type' => $result['success'] ? 'success' : 'danger',
+            'text' => $result['message'],
+        ];
     }
 
     header('Location: ' . $redirectTo);
     exit;
-}
-
-$message = null;
-$messageType = 'success';
-if (isset($_GET['msg'])) {
-    $message = $_GET['msg'];
-    $messageType = 'success';
-} elseif (isset($_GET['error'])) {
-    $message = $_GET['error'];
-    $messageType = 'danger';
 }
 
 $items = Cart::getItems();
@@ -81,12 +73,6 @@ require __DIR__ . '/partials/header.php';
 ?>
 <section class="container py-5">
     <h1 class="h3 fw-bold mb-4">Giỏ hàng của bạn</h1>
-
-    <?php if ($message): ?>
-        <div class="alert alert-<?= htmlspecialchars($messageType, ENT_QUOTES, 'UTF-8') ?>">
-            <?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>
-        </div>
-    <?php endif; ?>
 
     <?php if (empty($items)): ?>
         <!-- Trạng thái giỏ hàng trống -->

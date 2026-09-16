@@ -48,10 +48,15 @@ $isProducts = str_ends_with($currentPath, '/products.php');
                 <span><strong>NHÓM 6</strong><small>TECH STORE</small></span>
             </a>
 
-            <form class="header-search" method="get" action="<?= $basePath ?>/views/products.php" role="search">
-                <input type="search" name="q" placeholder="Bạn cần tìm sản phẩm gì?" aria-label="Tìm kiếm sản phẩm"
+            <form class="header-search" method="get" action="<?= $basePath ?>/views/products.php" role="search"
+                  data-base-path="<?= htmlspecialchars($basePath, ENT_QUOTES, 'UTF-8') ?>"
+                  data-suggest-url="<?= $basePath ?>/views/api/products-search.php" autocomplete="off">
+                <input type="search" name="q" id="headerSearchInput" placeholder="Bạn cần tìm sản phẩm gì?"
+                       aria-label="Tìm kiếm sản phẩm" aria-autocomplete="list" aria-expanded="false"
+                       aria-controls="headerSearchSuggest" role="combobox"
                        value="<?= htmlspecialchars((string) ($_GET['q'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
                 <button type="submit" aria-label="Tìm kiếm"><span aria-hidden="true">⌕</span><span class="d-none d-sm-inline">Tìm kiếm</span></button>
+                <div id="headerSearchSuggest" class="search-suggest-panel" role="listbox" hidden></div>
             </form>
 
             <div class="header-actions">
@@ -101,3 +106,12 @@ $isProducts = str_ends_with($currentPath, '/products.php');
     </nav>
 </header>
 <main>
+<?php if (!empty($_SESSION['flash'])): ?>
+    <div class="container mt-3">
+        <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['type'], ENT_QUOTES, 'UTF-8') ?> alert-dismissible fade show" role="alert">
+            <?= htmlspecialchars($_SESSION['flash']['text'], ENT_QUOTES, 'UTF-8') ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+        </div>
+    </div>
+    <?php unset($_SESSION['flash']); ?>
+<?php endif; ?>

@@ -75,6 +75,12 @@ switch ($action) {
     case 'admin-order-detail':
         (new OrderController($pdo))->adminDetail();
         break;
+    case 'order-invoice':
+        (new OrderController($pdo))->invoice();
+        break;
+    case 'admin-order-invoice':
+        (new OrderController($pdo))->adminInvoice();
+        break;
     case 'admin-order-status':
         (new OrderController($pdo))->updateStatus();
         break;

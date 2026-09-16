@@ -103,6 +103,10 @@ final class OrderController
         require __DIR__ . '/../views/admin/orders/detail.php';
     }
 
+    /**
+     * Hoá đơn cho khách hàng - chỉ xem được đơn hàng của chính mình
+     * (findForUser() đã lọc theo user_id, giống cơ chế của detail()).
+     */
     public function invoice(): void
     {
         AuthMiddleware::requireLogin();
@@ -114,6 +118,9 @@ final class OrderController
         require __DIR__ . '/../views/orders/invoice.php';
     }
 
+    /**
+     * Hoá đơn cho Admin - xem được mọi đơn hàng (find() không lọc theo user_id).
+     */
     public function adminInvoice(): void
     {
         AuthMiddleware::requireAdmin();
