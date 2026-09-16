@@ -1,7 +1,7 @@
 # Checklist kiểm thử Sprint 4 (SHOP-40)
 
 Người kiểm thử: Phạm Đình Khoa
-Môi trường: XAMPP local (PHP 8.2, MySQL), tài khoản admin@nhom6.local / customer@nhom6.local
+Môi trường: XAMPP local (PHP 8.2, MySQL), tài khoản admin@nhom2.local / customer@nhom2.local
 Ngày kiểm thử: 16/09/2026
 
 ## A. Product API (SHOP-36/37 — views/api/products-search.php)

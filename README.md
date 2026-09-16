@@ -1,4 +1,4 @@
-# Website bán hàng cơ bản - Nhóm 6
+# Website bán hàng cơ bản - Nhóm 2
 
 Bài tập nhóm cuối kỳ môn Lập trình Web, xây dựng bằng PHP thuần, MariaDB/MySQL, Bootstrap và Chart.js.
 
@@ -20,7 +20,7 @@ Bài tập nhóm cuối kỳ môn Lập trình Web, xây dựng bằng PHP thu�
 
 Tài khoản quản trị mẫu sau khi import database:
 
-- Email: `admin@nhom6.local`
+- Email: `admin@nhom2.local`
 - Mật khẩu: `Admin@123`
 
 Có thể tạo lại toàn bộ database cùng dữ liệu mẫu cho SHOP-17 bằng lệnh:

@@ -20,7 +20,7 @@ $statusLabels = [
 <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-3">
     <div>
         <h2 class="h5 fw-bold mb-1">HÓA ĐƠN BÁN HÀNG</h2>
-        <p class="text-secondary mb-0 small">Nhóm 6 Tech Store</p>
+        <p class="text-secondary mb-0 small">Nhóm 2 Tech Store</p>
     </div>
     <div class="text-md-end small">
         <p class="mb-1"><strong>Mã đơn hàng:</strong> <?= htmlspecialchars($orderCode, ENT_QUOTES, 'UTF-8') ?></p>
