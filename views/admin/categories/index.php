@@ -73,6 +73,7 @@
                                                 <i class="bi bi-pencil-square"></i> Sửa
                                             </a>
                                             <form action="index.php?action=category-delete" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này không?');">
+                                                <?= Security::csrfField() ?>
                                                 <input type="hidden" name="id" value="<?= (int)$cat['id'] ?>">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">
                                                     <i class="bi bi-trash"></i> Xóa

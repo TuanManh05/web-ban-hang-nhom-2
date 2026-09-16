@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+require_once __DIR__ . '/../middleware/Security.php';
 
 final class AuthController
 {
@@ -11,9 +12,7 @@ final class AuthController
 
     public function __construct(PDO $pdo)
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        Security::startSession();
 
         $this->users = new User($pdo);
     }
@@ -30,8 +29,8 @@ final class AuthController
     public function register(): void
     {
         AuthMiddleware::redirectAuthenticatedUser();
-        $this->requirePost();
-        $this->verifyCsrf();
+        Security::requirePost();
+        Security::verifyCsrf();
 
         $name = trim((string) ($_POST['name'] ?? ''));
         $email = strtolower(trim((string) ($_POST['email'] ?? '')));
@@ -79,8 +78,8 @@ final class AuthController
     public function login(): void
     {
         AuthMiddleware::redirectAuthenticatedUser();
-        $this->requirePost();
-        $this->verifyCsrf();
+        Security::requirePost();
+        Security::verifyCsrf();
 
         $email = strtolower(trim((string) ($_POST['email'] ?? '')));
         $password = (string) ($_POST['password'] ?? '');
@@ -101,6 +100,7 @@ final class AuthController
             'email' => $user['email'],
             'role' => $user['role'],
         ];
+        $_SESSION['last_activity'] = time();
 
         $action = $user['role'] === 'admin' ? 'admin' : 'home';
         header('Location: index.php?action=' . $action);
@@ -109,8 +109,8 @@ final class AuthController
 
     public function logout(): void
     {
-        $this->requirePost();
-        $this->verifyCsrf();
+        Security::requirePost();
+        Security::verifyCsrf();
 
         $_SESSION = [];
         if (ini_get('session.use_cookies')) {
@@ -121,22 +121,5 @@ final class AuthController
 
         header('Location: index.php?action=login&msg=' . urlencode('Bạn đã đăng xuất.'));
         exit;
-    }
-
-    private function requirePost(): void
-    {
-        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
-            http_response_code(405);
-            exit('Phương thức không được hỗ trợ.');
-        }
-    }
-
-    private function verifyCsrf(): void
-    {
-        $token = (string) ($_POST['csrf_token'] ?? '');
-        if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) {
-            http_response_code(419);
-            exit('Phiên làm việc đã hết hạn. Vui lòng tải lại trang.');
-        }
     }
 }

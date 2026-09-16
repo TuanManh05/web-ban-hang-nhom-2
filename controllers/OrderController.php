@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../models/Cart.php';
 require_once __DIR__ . '/../models/Order.php';
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+require_once __DIR__ . '/../middleware/Security.php';
 
 final class OrderController
 {
@@ -12,21 +13,15 @@ final class OrderController
 
     public function __construct(PDO $pdo)
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        Security::startSession();
 
         $this->orders = new Order($pdo);
     }
 
     public function store(): void
     {
-        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
-            http_response_code(405);
-            exit('Phương thức không được hỗ trợ.');
-        }
-
-        $this->verifyCsrf();
+        Security::requirePost();
+        Security::verifyCsrf();
 
         $customer = [
             'name' => trim((string) ($_POST['customer_name'] ?? '')),
@@ -53,8 +48,6 @@ final class OrderController
             Cart::clear();
             unset($_SESSION['checkout_errors'], $_SESSION['checkout_old']);
 
-            // Đọc lại đơn hàng từ database (không dùng lại dữ liệu tạm trong request)
-            // để đảm bảo hoá đơn hiển thị luôn khớp với dữ liệu đã lưu.
             $order = $this->orders->find($orderId);
             $orderCode = 'DH' . str_pad((string) $orderId, 6, '0', STR_PAD_LEFT);
             $pageTitle = 'Đặt hàng thành công';
@@ -142,8 +135,8 @@ final class OrderController
     public function updateStatus(): void
     {
         AuthMiddleware::requireAdmin();
-        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') { http_response_code(405); exit('Phương thức không được hỗ trợ.'); }
-        $this->verifyCsrf();
+        Security::requirePost();
+        Security::verifyCsrf();
         $orderId = max(0, (int) ($_POST['order_id'] ?? 0));
         $updated = $this->orders->updateStatus($orderId, (string) ($_POST['status'] ?? ''));
         $_SESSION['flash'] = [
@@ -157,8 +150,8 @@ final class OrderController
     public function cancel(): void
     {
         AuthMiddleware::requireLogin();
-        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') { http_response_code(405); exit('Phương thức không được hỗ trợ.'); }
-        $this->verifyCsrf();
+        Security::requirePost();
+        Security::verifyCsrf();
         $orderId = max(0, (int) ($_POST['order_id'] ?? 0));
         try {
             $cancelled = $this->orders->cancelForUser($orderId, (int) $_SESSION['user']['id']);
@@ -198,15 +191,6 @@ final class OrderController
         }
 
         return $errors;
-    }
-
-    private function verifyCsrf(): void
-    {
-        $token = (string) ($_POST['csrf_token'] ?? '');
-        if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) {
-            http_response_code(419);
-            exit('Phiên làm việc đã hết hạn. Vui lòng tải lại trang.');
-        }
     }
 
     private function redirectBack(string $message): never

@@ -1,12 +1,23 @@
 <?php
 declare(strict_types=1);
 
-// Bật hiển thị lỗi chi tiết để dễ dàng kiểm tra
-ini_set('display_errors', '1');
-ini_set('display_startup_errors', '1');
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
 error_reporting(E_ALL);
 
-session_start();
+set_exception_handler(function (Throwable $e): void {
+    error_log($e->__toString());
+    http_response_code(500);
+    echo '<!doctype html><html lang="vi"><head><meta charset="utf-8">'
+        . '<title>Lỗi hệ thống</title></head>'
+        . '<body style="font-family:sans-serif;text-align:center;padding:60px;">'
+        . '<h2>Đã có lỗi xảy ra</h2>'
+        . '<p>Vui lòng thử lại sau hoặc liên hệ quản trị viên.</p>'
+        . '<a href="index.php">Về trang chủ</a></body></html>';
+});
+
+require_once __DIR__ . '/middleware/Security.php';
+Security::startSession();
 
 // Nạp các file cấu hình và Controller cần thiết
 require_once __DIR__ . '/config/database.php';
@@ -23,10 +34,6 @@ $pdo = database();
 
 // Lấy tham số action từ URL (mặc định quay về 'home')
 $action = $_GET['action'] ?? 'home';
-
-if (!isset($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
 
 switch ($action) {
     case 'register':

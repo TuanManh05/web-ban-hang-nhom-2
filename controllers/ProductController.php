@@ -1,15 +1,13 @@
 <?php
 require_once __DIR__ . '/../models/ProductModel.php';
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+require_once __DIR__ . '/../middleware/Security.php';
 
 class ProductController {
     private $productModel;
 
     public function __construct($pdo) {
-        // 1. Khởi tạo session nếu chưa khởi chạy
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        Security::startSession();
 
         AuthMiddleware::requireAdmin();
 
@@ -43,27 +41,20 @@ class ProductController {
         return $slug;
     }
 
-    /**
-     * Hiển thị danh sách sản phẩm (Read)
-     */
     public function index() {
         $products = $this->productModel->getAllProducts();
         require_once __DIR__ . '/../views/admin/products/index.php';
     }
 
-    /**
-     * Hiển thị Form thêm mới
-     */
     public function create() {
         $categories = $this->productModel->getAllCategories();
         require_once __DIR__ . '/../views/admin/products/create.php';
     }
 
-    /**
-     * Xử lý lưu sản phẩm
-     */
     public function store() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            Security::verifyCsrf();
+
             $name        = trim($_POST['name'] ?? '');
             $category_id = (int)($_POST['category_id'] ?? 0);
             $price       = $_POST['price'] ?? '';
@@ -77,7 +68,6 @@ class ProductController {
                 $errors[] = "Tên sản phẩm không được để trống.";
             }
 
-            // Kiểm tra danh mục hợp lệ và tồn tại trong DB
             if ($category_id <= 0) {
                 $errors[] = "Vui lòng chọn danh mục hợp lệ.";
             } else {
@@ -123,9 +113,6 @@ class ProductController {
         }
     }
 
-    /**
-     * Hiển thị Form sửa
-     */
     public function edit() {
         $id = (int)($_GET['id'] ?? 0);
         $product = $this->productModel->getProductById($id);
@@ -139,11 +126,10 @@ class ProductController {
         require_once __DIR__ . '/../views/admin/products/edit.php';
     }
 
-    /**
-     * Xử lý cập nhật sản phẩm
-     */
     public function update() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            Security::verifyCsrf();
+
             $id          = (int)($_GET['id'] ?? 0);
             $product     = $this->productModel->getProductById($id);
 
@@ -165,7 +151,6 @@ class ProductController {
                 $errors[] = "Tên sản phẩm không được để trống.";
             }
 
-            // Kiểm tra danh mục hợp lệ và tồn tại trong DB
             if ($category_id <= 0) {
                 $errors[] = "Vui lòng chọn danh mục hợp lệ.";
             } else {
@@ -213,11 +198,10 @@ class ProductController {
         }
     }
 
-    /**
-     * Xóa sản phẩm (Chỉ nhận POST)
-     */
     public function delete() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            Security::verifyCsrf();
+
             $id = (int)($_POST['id'] ?? 0);
             
             if ($id > 0 && $this->productModel->getProductById($id)) {

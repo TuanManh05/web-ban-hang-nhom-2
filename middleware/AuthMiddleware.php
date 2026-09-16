@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/Security.php';
+
 final class AuthMiddleware
 {
     public static function requireLogin(): void
     {
-        self::startSession();
+        Security::startSession();
 
         if (!isset($_SESSION['user'])) {
             self::redirectToLogin('Vui lòng đăng nhập để tiếp tục.');
@@ -25,19 +27,12 @@ final class AuthMiddleware
 
     public static function redirectAuthenticatedUser(): void
     {
-        self::startSession();
+        Security::startSession();
 
         if (isset($_SESSION['user'])) {
             $action = ($_SESSION['user']['role'] ?? '') === 'admin' ? 'admin' : 'home';
             header('Location: index.php?action=' . $action);
             exit;
-        }
-    }
-
-    private static function startSession(): void
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
         }
     }
 

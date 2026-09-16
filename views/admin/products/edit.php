@@ -28,7 +28,7 @@
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
             <form action="index.php?action=product-update&id=<?= $product['id'] ?>" method="POST">
-                
+                <?= Security::csrfField() ?>
                 <div class="mb-3">
                     <label for="name" class="form-label fw-bold">Tên sản phẩm <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($_POST['name'] ?? $product['name']) ?>" required>

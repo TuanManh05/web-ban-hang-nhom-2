@@ -1,14 +1,13 @@
 <?php
 require_once __DIR__ . '/../models/CategoryModel.php';
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+require_once __DIR__ . '/../middleware/Security.php';
 
 class CategoryController {
     private $categoryModel;
 
     public function __construct($pdo) {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        Security::startSession();
 
         AuthMiddleware::requireAdmin();
         $this->categoryModel = new CategoryModel($pdo);
@@ -41,23 +40,22 @@ class CategoryController {
         return $slug;
     }
 
-    // 1. Hiển thị danh sách danh mục
     public function index() {
         $categories = $this->categoryModel->getAllCategories();
         require_once __DIR__ . '/../views/admin/categories/index.php';
     }
 
-    // 2. Form thêm danh mục
     public function create() {
         require_once __DIR__ . '/../views/admin/categories/create.php';
     }
 
-    // 2. Lưu danh mục mới
     public function store() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?action=category-index&error=' . urlencode('Phương thức không được hỗ trợ!'));
             exit;
         }
+
+        Security::verifyCsrf();
 
         $name = trim($_POST['name'] ?? '');
         $status = (int)($_POST['status'] ?? 1);
@@ -84,7 +82,6 @@ class CategoryController {
         require_once __DIR__ . '/../views/admin/categories/create.php';
     }
 
-    // 3. Form chỉnh sửa danh mục
     public function edit() {
         $id = (int)($_GET['id'] ?? 0);
         $category = $this->categoryModel->getCategoryById($id);
@@ -95,12 +92,13 @@ class CategoryController {
         require_once __DIR__ . '/../views/admin/categories/edit.php';
     }
 
-    // 3. Cập nhật danh mục
     public function update() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?action=category-index&error=' . urlencode('Phương thức không được hỗ trợ!'));
             exit;
         }
+
+        Security::verifyCsrf();
 
         $id = (int)($_GET['id'] ?? 0);
         $category = $this->categoryModel->getCategoryById($id);
@@ -136,12 +134,13 @@ class CategoryController {
         require_once __DIR__ . '/../views/admin/categories/edit.php';
     }
 
-    // 4. Xóa danh mục
     public function delete() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?action=category-index&error=' . urlencode('Phương thức không được hỗ trợ!'));
             exit;
         }
+
+        Security::verifyCsrf();
 
         $id = (int)($_POST['id'] ?? 0);
         $category = $this->categoryModel->getCategoryById($id);

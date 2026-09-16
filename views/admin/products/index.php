@@ -95,6 +95,7 @@
                                             </a>
                                             <!-- Nút Xóa (Đã chuyển từ GET sang Form POST) -->
                                             <form action="index.php?action=product-delete" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?');">
+                                                <?= Security::csrfField() ?>
                                                 <input type="hidden" name="id" value="<?= $p['id'] ?>">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" title="Xóa">
                                                     <i class="bi bi-trash"></i> Xóa
