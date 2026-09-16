@@ -31,6 +31,14 @@ class ProductModel {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    // Lấy danh mục theo slug để các liên kết như ?category=phu-kien hoạt động ổn định.
+    public function getCategoryBySlug(string $slug) {
+        $sql = "SELECT * FROM categories WHERE slug = ? AND status = 1 LIMIT 1";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$slug]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     // Lấy 1 sản phẩm theo ID
     public function getProductById($id) {
         $sql = "SELECT * FROM products WHERE id = ?";
@@ -114,8 +122,11 @@ class ProductModel {
         $params = [];
 
         if (!empty($filters['q'])) {
-            $where[] = 'p.name LIKE :keyword';
-            $params[':keyword'] = '%' . $filters['q'] . '%';
+            $where[] = '(p.name LIKE :keyword_name OR p.description LIKE :keyword_description OR c.name LIKE :keyword_category)';
+            $keyword = '%' . $filters['q'] . '%';
+            $params[':keyword_name'] = $keyword;
+            $params[':keyword_description'] = $keyword;
+            $params[':keyword_category'] = $keyword;
         }
 
         if (!empty($filters['category_id'])) {
@@ -157,20 +168,26 @@ class ProductModel {
      */
     public function countSearchProducts(array $filters): int
     {
-        $where = ['status = 1'];
+        $where = ['p.status = 1'];
         $params = [];
 
         if (!empty($filters['q'])) {
-            $where[] = 'name LIKE :keyword';
-            $params[':keyword'] = '%' . $filters['q'] . '%';
+            $where[] = '(p.name LIKE :keyword_name OR p.description LIKE :keyword_description OR c.name LIKE :keyword_category)';
+            $keyword = '%' . $filters['q'] . '%';
+            $params[':keyword_name'] = $keyword;
+            $params[':keyword_description'] = $keyword;
+            $params[':keyword_category'] = $keyword;
         }
 
         if (!empty($filters['category_id'])) {
-            $where[] = 'category_id = :category_id';
+            $where[] = 'p.category_id = :category_id';
             $params[':category_id'] = (int) $filters['category_id'];
         }
 
-        $sql = 'SELECT COUNT(*) FROM products WHERE ' . implode(' AND ', $where);
+        $sql = 'SELECT COUNT(*)
+                FROM products p
+                LEFT JOIN categories c ON p.category_id = c.id
+                WHERE ' . implode(' AND ', $where);
         $stmt = $this->pdo->prepare($sql);
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);

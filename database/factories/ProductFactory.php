@@ -4,38 +4,51 @@ declare(strict_types=1);
 
 final class ProductFactory
 {
-    private const BRANDS = ['Sony', 'Canon', 'Dell', 'Asus', 'Apple', 'Samsung', 'Logitech', 'Xiaomi'];
-    private const TYPES = ['Pro', 'Ultra', 'Max', 'Lite', 'Plus', 'Gaming', 'Wireless'];
+    /**
+     * Danh mục cố định để tên, loại sản phẩm và hình ảnh luôn khớp nhau.
+     */
+    private const CATALOG = [
+        ['laptop', 'Laptop Mỏng Nhẹ', 'laptop-van-phong-mong-nhe', 15990000, 18, 'Laptop thiết kế gọn nhẹ, phù hợp học tập và công việc văn phòng hằng ngày.'],
+        ['laptop', 'Laptop Lập Trình', 'laptop-lap-trinh-hieu-nang-cao', 23990000, 12, 'Laptop hiệu năng cao dành cho lập trình, học tập và xử lý nhiều tác vụ.'],
+        ['laptop', 'Laptop Học Tập 14"', 'laptop-hoc-tap-14-inch', 12990000, 25, 'Laptop 14 inch nhỏ gọn, đáp ứng nhu cầu học trực tuyến và làm bài tập.'],
+        ['laptop', 'Laptop 15"', 'laptop-man-hinh-lon-15-inch', 18990000, 15, 'Laptop màn hình lớn, không gian hiển thị rộng và bàn phím thuận tiện khi làm việc.'],
+        ['dien-thoai', 'Điện Thoại Tràn Viền', 'dien-thoai-man-hinh-tran-vien', 13990000, 20, 'Điện thoại thông minh với màn hình lớn, hiển thị rõ và thao tác cảm ứng thuận tiện.'],
+        ['dien-thoai', 'Điện Thoại Đen', 'dien-thoai-thong-minh-mau-den', 11990000, 22, 'Điện thoại màu đen với thiết kế hiện đại, phù hợp nhu cầu liên lạc và giải trí.'],
+        ['dien-thoai', 'Điện Thoại Camera Kép', 'dien-thoai-thong-minh-camera-kep', 16990000, 14, 'Điện thoại thông minh trang bị cụm camera kép và màn hình sắc nét.'],
+        ['dien-thoai', 'Điện Thoại Slim', 'dien-thoai-thiet-ke-mong-nhe', 9990000, 28, 'Điện thoại có thiết kế mỏng nhẹ, dễ cầm nắm và mang theo hằng ngày.'],
+        ['phu-kien', 'Tai Nghe Wireless', 'tai-nghe-chup-tai-khong-day', 1490000, 30, 'Tai nghe chụp tai không dây, đệm tai êm và phù hợp nghe nhạc hằng ngày.'],
+        ['phu-kien', 'Tai Nghe Chống Ồn', 'tai-nghe-chup-tai-chong-on', 2290000, 16, 'Tai nghe chụp tai hỗ trợ giảm tiếng ồn, thích hợp làm việc và giải trí.'],
+        ['phu-kien', 'Tai Nghe Studio', 'tai-nghe-chup-tai-studio', 1890000, 19, 'Tai nghe chụp tai kiểu Studio với âm thanh rõ và thiết kế chắc chắn.'],
+        ['may-anh', 'Máy Ảnh Lens Rời', 'may-anh-ong-kinh-roi-mau-den', 18490000, 10, 'Máy ảnh ống kính rời màu đen, phù hợp chụp ảnh chân dung và phong cảnh.'],
+        ['may-anh', 'Máy Ảnh Cơ Bản', 'may-anh-danh-cho-nguoi-moi', 12990000, 13, 'Máy ảnh dễ sử dụng cho người mới bắt đầu học chụp ảnh.'],
+        ['may-anh', 'Máy Ảnh Du Lịch', 'may-anh-du-lich-nho-gon', 15490000, 11, 'Máy ảnh nhỏ gọn, thuận tiện mang theo trong các chuyến đi.'],
+        ['may-anh', 'Máy Ảnh Pro', 'may-anh-chup-anh-chuyen-nghiep', 27990000, 8, 'Máy ảnh hiệu năng cao dành cho nhu cầu chụp ảnh chuyên nghiệp.'],
+        ['pc-gaming', 'PC Gaming Yasuo', 'pc-gaming-yasuo', 17247000, 9, 'Intel Core i5-12400F, RTX 3050 6GB, RAM 16GB và SSD 500GB; phù hợp chơi game Full HD.'],
+        ['pc-gaming', 'PC Gaming Storm C', 'pc-gaming-storm-c', 25737000, 7, 'Intel Core i5-12400F, RTX 5060, RAM 16GB và SSD 512GB; đáp ứng tốt eSports và game AAA.'],
+        ['pc-gaming', 'PC Gaming Karmish', 'pc-gaming-karmish', 30451000, 5, 'Intel Core i5-14400F, RTX 5060, RAM DDR5 16GB, SSD 512GB và Wi-Fi.'],
+        ['phu-kien', 'Chuột Gaming RGB', 'chuot-gaming-rgb-co-day', 690000, 32, 'Chuột gaming có dây với đèn RGB, cảm biến chính xác và thiết kế thuận tay cho các phiên chơi dài.'],
+        ['phu-kien', 'Bàn Phím Cơ RGB', 'ban-phim-co-gaming-rgb', 1490000, 24, 'Bàn phím cơ gaming có đèn RGB, phản hồi phím rõ và bố cục thuận tiện cho chơi game lẫn làm việc.'],
+        ['phu-kien', 'Tay Cầm Không Dây', 'tay-cam-choi-game-khong-day', 1290000, 20, 'Tay cầm chơi game không dây với hai cần analog, bố cục nút quen thuộc và kết nối ổn định.'],
+    ];
 
-    public static function definition(int $categoryId, int $sequence): array
+    public static function generate(array $categoryIdsBySlug): array
     {
-        $name = self::BRANDS[array_rand(self::BRANDS)]
-            . ' ' . self::TYPES[array_rand(self::TYPES)]
-            . ' ' . random_int(100, 999);
-
-        $baseSlug = strtolower(trim((string) preg_replace('/[^A-Za-z0-9]+/', '-', $name), '-'));
-
-        return [
-            'category_id' => $categoryId,
-            'name' => $name,
-            'slug' => $baseSlug . '-' . $sequence . '-' . bin2hex(random_bytes(3)),
-            'price' => random_int(50, 5000) * 10000,
-            'stock' => random_int(5, 50),
-            'status' => 1,
-            'description' => 'Sản phẩm mẫu phục vụ phát triển: ' . $name,
-        ];
-    }
-
-    public static function generate(int $count, array $categoryIds): array
-    {
-        if ($count < 1 || $categoryIds === []) {
-            return [];
-        }
-
         $products = [];
-        for ($i = 1; $i <= $count; $i++) {
-            $categoryId = (int) $categoryIds[array_rand($categoryIds)];
-            $products[] = self::definition($categoryId, $i);
+
+        foreach (self::CATALOG as [$categorySlug, $name, $slug, $price, $stock, $description]) {
+            if (!isset($categoryIdsBySlug[$categorySlug])) {
+                throw new RuntimeException('Thiếu danh mục cho sản phẩm mẫu: ' . $categorySlug);
+            }
+
+            $products[] = [
+                'category_id' => (int) $categoryIdsBySlug[$categorySlug],
+                'name' => $name,
+                'slug' => $slug,
+                'price' => $price,
+                'stock' => $stock,
+                'status' => 1,
+                'description' => 'Sản phẩm mẫu phục vụ phát triển: ' . $description,
+            ];
         }
 
         return $products;

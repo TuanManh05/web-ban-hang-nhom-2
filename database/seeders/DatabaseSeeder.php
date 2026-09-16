@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../factories/ProductFactory.php';
+require_once __DIR__ . '/ProductCatalogSeeder.php';
 require_once __DIR__ . '/ProductImageSeeder.php';
 
 final class DatabaseSeeder
@@ -47,25 +47,12 @@ final class DatabaseSeeder
                 ['Laptop', 'laptop'],
                 ['Phụ kiện', 'phu-kien'],
                 ['Máy ảnh', 'may-anh'],
+                ['PC Gaming', 'pc-gaming'],
             ] as [$name, $slug]) {
                 $categoryStatement->execute(['name' => $name, 'slug' => $slug]);
             }
 
-            $categoryIds = $this->pdo
-                ->query("SELECT id FROM categories WHERE status = 1 ORDER BY id")
-                ->fetchAll(PDO::FETCH_COLUMN);
-
-            $productStatement = $this->pdo->prepare(
-                'INSERT INTO products
-                    (category_id, name, slug, description, price, stock, status)
-                 VALUES
-                    (:category_id, :name, :slug, :description, :price, :stock, :status)'
-            );
-
-            foreach (ProductFactory::generate(15, $categoryIds) as $product) {
-                $productStatement->execute($product);
-            }
-
+            (new ProductCatalogSeeder($this->pdo))->run();
             (new ProductImageSeeder($this->pdo))->run();
 
             $this->pdo->commit();

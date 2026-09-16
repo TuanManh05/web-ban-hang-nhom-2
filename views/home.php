@@ -5,13 +5,13 @@
         <div class="hero-layout">
             <aside class="home-categories">
                 <h2><span>☰</span> Danh mục nổi bật</h2>
-                <a href="<?= $basePath ?>/views/products.php?q=PC"><span>🖥</span> PC Gaming <b>›</b></a>
-                <a href="<?= $basePath ?>/views/products.php?q=Laptop"><span>▰</span> Laptop <b>›</b></a>
+                <a href="<?= $basePath ?>/views/products.php?category=pc-gaming"><span>🖥</span> PC Gaming <b>›</b></a>
+                <a href="<?= $basePath ?>/views/products.php?category=laptop"><span>▰</span> Laptop <b>›</b></a>
                 <a href="<?= $basePath ?>/views/products.php?q=CPU"><span>▣</span> CPU - Bộ vi xử lý <b>›</b></a>
                 <a href="<?= $basePath ?>/views/products.php?q=VGA"><span>▤</span> VGA - Card màn hình <b>›</b></a>
                 <a href="<?= $basePath ?>/views/products.php?q=RAM"><span>▥</span> RAM - Bộ nhớ <b>›</b></a>
                 <a href="<?= $basePath ?>/views/products.php?q=SSD"><span>▱</span> SSD - Ổ cứng <b>›</b></a>
-                <a href="<?= $basePath ?>/views/products.php?q=Phụ kiện"><span>⌨</span> Gaming Gear <b>›</b></a>
+                <a href="<?= $basePath ?>/views/products.php?category=phu-kien"><span>⌨</span> Gaming Gear <b>›</b></a>
             </aside>
 
             <div class="main-promo">
@@ -32,7 +32,7 @@
                 <a href="<?= $basePath ?>/views/products.php?sort=price_asc" class="side-promo red-promo">
                     <small>DEAL GIÁ SỐC</small><strong>GIẢM ĐẾN<br>30%</strong><span>Săn ngay hôm nay →</span>
                 </a>
-                <a href="<?= $basePath ?>/views/products.php?q=Laptop" class="side-promo dark-promo">
+                <a href="<?= $basePath ?>/views/products.php?category=laptop" class="side-promo dark-promo">
                     <small>LAPTOP HỌC TẬP</small><strong>NHẸ NHÀNG<br>MẠNH MẼ</strong><span>Khám phá ngay →</span>
                 </a>
             </div>
@@ -92,10 +92,10 @@
 
 <section class="container pb-5">
     <div class="category-showcase">
-        <div><span>🖥</span><strong>PC Gaming</strong><a href="<?= $basePath ?>/views/products.php?q=Gaming">Xem sản phẩm</a></div>
-        <div><span>▰</span><strong>Laptop</strong><a href="<?= $basePath ?>/views/products.php?q=Laptop">Xem sản phẩm</a></div>
+        <div><span>🖥</span><strong>PC Gaming</strong><a href="<?= $basePath ?>/views/products.php?category=pc-gaming">Xem sản phẩm</a></div>
+        <div><span>▰</span><strong>Laptop</strong><a href="<?= $basePath ?>/views/products.php?category=laptop">Xem sản phẩm</a></div>
         <div><span>▣</span><strong>Linh kiện</strong><a href="<?= $basePath ?>/views/products.php?q=CPU">Xem sản phẩm</a></div>
-        <div><span>⌨</span><strong>Phụ kiện</strong><a href="<?= $basePath ?>/views/products.php?q=Phụ kiện">Xem sản phẩm</a></div>
+        <div><span>⌨</span><strong>Phụ kiện</strong><a href="<?= $basePath ?>/views/products.php?category=phu-kien">Xem sản phẩm</a></div>
     </div>
 </section>
 

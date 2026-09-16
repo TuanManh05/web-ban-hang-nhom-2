@@ -99,6 +99,10 @@ switch ($action) {
         require_once __DIR__ . '/views/checkout.php';
         break;
 
+    case 'policy':
+        require_once __DIR__ . '/views/policy.php';
+        break;
+
     // ==========================================
     // 0. Trang Dashboard Quản trị trung tâm (Admin Index)
     // ==========================================

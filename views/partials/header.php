@@ -35,7 +35,7 @@ $isProducts = str_ends_with($currentPath, '/products.php');
             <p class="mb-0 d-none d-md-block">Công nghệ chính hãng · Giá tốt mỗi ngày</p>
             <div class="utility-links ms-auto">
                 <a href="#store-services">Khuyến mãi</a>
-                <a href="#store-services">Chính sách</a>
+                <a href="<?= $basePath ?>/index.php?action=policy">Chính sách</a>
                 <span>Hotline: <strong>1900 6868</strong></span>
             </div>
         </div>
@@ -97,9 +97,9 @@ $isProducts = str_ends_with($currentPath, '/products.php');
             <div class="quick-links">
                 <a class="<?= $isHome ? 'active' : '' ?>" href="<?= $basePath ?>/index.php">Trang chủ</a>
                 <a class="<?= $isProducts ? 'active' : '' ?>" href="<?= $basePath ?>/views/products.php">Sản phẩm</a>
-                <a href="<?= $basePath ?>/views/products.php?q=Laptop">Laptop</a>
-                <a href="<?= $basePath ?>/views/products.php?q=Gaming">PC Gaming</a>
-                <a href="<?= $basePath ?>/views/products.php?q=Phụ kiện">Phụ kiện</a>
+                <a href="<?= $basePath ?>/views/products.php?category=laptop">Laptop</a>
+                <a href="<?= $basePath ?>/views/products.php?category=pc-gaming">PC Gaming</a>
+                <a href="<?= $basePath ?>/views/products.php?category=phu-kien">Phụ kiện</a>
                 <a href="<?= $basePath ?>/views/products.php?sort=price_asc">Giá tốt</a>
             </div>
         </div>
