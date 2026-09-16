@@ -5,6 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../models/Cart.php';
 require_once __DIR__ . '/../models/Order.php';
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+require_once __DIR__ . '/../middleware/Security.php';
 
 final class OrderController
 {
@@ -12,21 +13,15 @@ final class OrderController
 
     public function __construct(PDO $pdo)
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        Security::startSession();
 
         $this->orders = new Order($pdo);
     }
 
     public function store(): void
     {
-        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
-            http_response_code(405);
-            exit('Phương thức không được hỗ trợ.');
-        }
-
-        $this->verifyCsrf();
+        Security::requirePost();
+        Security::verifyCsrf();
 
         $customer = [
             'name' => trim((string) ($_POST['customer_name'] ?? '')),
@@ -53,6 +48,7 @@ final class OrderController
             Cart::clear();
             unset($_SESSION['checkout_errors'], $_SESSION['checkout_old']);
 
+            $order = $this->orders->find($orderId);
             $orderCode = 'DH' . str_pad((string) $orderId, 6, '0', STR_PAD_LEFT);
             $pageTitle = 'Đặt hàng thành công';
             require __DIR__ . '/../views/order-success.php';
@@ -107,31 +103,65 @@ final class OrderController
         require __DIR__ . '/../views/admin/orders/detail.php';
     }
 
+    public function invoice(): void
+    {
+        AuthMiddleware::requireLogin();
+        $order = $this->orders->findForUser(max(0, (int) ($_GET['id'] ?? 0)), (int) $_SESSION['user']['id']);
+        if (!$order) { http_response_code(404); }
+        $orderCode = $order ? 'DH' . str_pad((string) $order['id'], 6, '0', STR_PAD_LEFT) : '';
+        $backUrl = $order ? ('index.php?action=order-detail&id=' . $order['id']) : 'index.php?action=orders';
+        $pageTitle = 'Hóa đơn ' . $orderCode;
+        require __DIR__ . '/../views/orders/invoice.php';
+    }
+
+    public function adminInvoice(): void
+    {
+        AuthMiddleware::requireAdmin();
+        $order = $this->orders->find(max(0, (int) ($_GET['id'] ?? 0)));
+        if (!$order) { http_response_code(404); }
+        $orderCode = $order ? 'DH' . str_pad((string) $order['id'], 6, '0', STR_PAD_LEFT) : '';
+        $backUrl = $order ? ('index.php?action=admin-order-detail&id=' . $order['id']) : 'index.php?action=admin-orders';
+        $pageTitle = 'Hóa đơn ' . $orderCode;
+        require __DIR__ . '/../views/orders/invoice.php';
+    }
+
     public function updateStatus(): void
     {
         AuthMiddleware::requireAdmin();
-        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') { http_response_code(405); exit('Phương thức không được hỗ trợ.'); }
-        $this->verifyCsrf();
+        Security::requirePost();
+        Security::verifyCsrf();
         $orderId = max(0, (int) ($_POST['order_id'] ?? 0));
         $updated = $this->orders->updateStatus($orderId, (string) ($_POST['status'] ?? ''));
-        $message = $updated ? 'Đã cập nhật trạng thái đơn hàng.' : 'Không thể cập nhật trạng thái đơn hàng.';
-        header('Location: index.php?action=admin-order-detail&id=' . $orderId . '&' . ($updated ? 'msg=' : 'error=') . urlencode($message));
+        $_SESSION['flash'] = [
+            'type' => $updated ? 'success' : 'danger',
+            'text' => $updated ? 'Đã cập nhật trạng thái đơn hàng.' : 'Không thể cập nhật trạng thái đơn hàng.',
+        ];
+        header('Location: index.php?action=admin-order-detail&id=' . $orderId);
         exit;
     }
 
     public function cancel(): void
     {
         AuthMiddleware::requireLogin();
-        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') { http_response_code(405); exit('Phương thức không được hỗ trợ.'); }
-        $this->verifyCsrf();
+        Security::requirePost();
+        Security::verifyCsrf();
         $orderId = max(0, (int) ($_POST['order_id'] ?? 0));
         try {
             $cancelled = $this->orders->cancelForUser($orderId, (int) $_SESSION['user']['id']);
-            $message = $cancelled ? 'Đã hủy đơn hàng và hoàn lại tồn kho.' : 'Chỉ có thể hủy đơn đang chờ xác nhận của bạn.';
-            header('Location: index.php?action=order-detail&id=' . $orderId . '&' . ($cancelled ? 'msg=' : 'error=') . urlencode($message));
+            $_SESSION['flash'] = [
+                'type' => $cancelled ? 'success' : 'danger',
+                'text' => $cancelled
+                    ? 'Đã hủy đơn hàng và hoàn lại tồn kho.'
+                    : 'Chỉ có thể hủy đơn đang chờ xác nhận của bạn.',
+            ];
+            header('Location: index.php?action=order-detail&id=' . $orderId);
         } catch (Throwable $exception) {
             error_log($exception->__toString());
-            header('Location: index.php?action=order-detail&id=' . $orderId . '&error=' . urlencode('Không thể hủy đơn lúc này.'));
+            $_SESSION['flash'] = [
+                'type' => 'danger',
+                'text' => 'Không thể hủy đơn lúc này.',
+            ];
+            header('Location: index.php?action=order-detail&id=' . $orderId);
         }
         exit;
     }
@@ -156,15 +186,6 @@ final class OrderController
         return $errors;
     }
 
-    private function verifyCsrf(): void
-    {
-        $token = (string) ($_POST['csrf_token'] ?? '');
-        if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) {
-            http_response_code(419);
-            exit('Phiên làm việc đã hết hạn. Vui lòng tải lại trang.');
-        }
-    }
-
     private function redirectBack(string $message): never
     {
         $checkoutView = __DIR__ . '/../views/checkout.php';
@@ -172,9 +193,12 @@ final class OrderController
             ? 'index.php?action=checkout'
             : 'views/cart.php';
 
-        $separator = str_contains($target, '?') ? '&' : '?';
+        $_SESSION['flash'] = [
+            'type' => 'danger',
+            'text' => $message,
+        ];
 
-        header('Location: ' . $target . $separator . 'error=' . urlencode($message));
+        header('Location: ' . $target);
         exit;
     }
 }
