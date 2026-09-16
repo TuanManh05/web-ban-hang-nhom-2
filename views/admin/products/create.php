@@ -33,7 +33,7 @@
         <div class="card-body p-4">
             <!-- Form gửi về action product-store -->
             <form action="index.php?action=product-store" method="POST">
-                
+                <?= Security::csrfField() ?>
                 <div class="mb-3">
                     <label for="name" class="form-label fw-bold">Tên sản phẩm <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($_POST['name'] ?? '') ?>" placeholder="Nhập tên sản phẩm" required>
