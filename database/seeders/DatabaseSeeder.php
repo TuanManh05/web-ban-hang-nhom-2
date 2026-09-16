@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../factories/ProductFactory.php';
+require_once __DIR__ . '/ProductImageSeeder.php';
 
 final class DatabaseSeeder
 {
@@ -64,6 +65,8 @@ final class DatabaseSeeder
             foreach (ProductFactory::generate(15, $categoryIds) as $product) {
                 $productStatement->execute($product);
             }
+
+            (new ProductImageSeeder($this->pdo))->run();
 
             $this->pdo->commit();
         } catch (Throwable $exception) {
