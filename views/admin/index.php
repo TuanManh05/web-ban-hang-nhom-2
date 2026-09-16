@@ -115,7 +115,20 @@ if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] ?? '') !== 'admin') 
         </div>
     </div>
 </div>
-
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body p-4 text-center">
+                    <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:60px;height:60px">
+                        <i class="bi bi-bar-chart-line fs-3"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Thống kê</h5>
+                    <p class="card-text text-muted small">Doanh thu, đơn hàng theo trạng thái, sản phẩm bán chạy.</p>
+                    <a href="index.php?action=admin-stats" class="btn btn-info w-100 mt-2 text-white">
+                        <i class="bi bi-arrow-right-circle me-1"></i>Xem thống kê
+                    </a>
+                </div>
+            </div>
+        </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
