@@ -13,9 +13,9 @@
             <a class="store-logo footer-logo" href="<?= $basePath ?>/index.php">
                 <span class="logo-mark">N2</span><span><strong>NHÓM 2</strong><small>TECH STORE</small></span>
             </a>
-            <p>Website bán hàng công nghệ cơ bản, xây dựng bằng PHP và MySQL.</p>
+            <p>Website bán hàng công nghệ.</p>
         </div>
-        <div><h3>Về chúng tôi</h3><a href="<?= $basePath ?>/index.php">Giới thiệu</a><a href="<?= $basePath ?>/views/products.php">Sản phẩm</a><a href="#store-services">Chính sách mua hàng</a></div>
+        <div><h3>Về chúng tôi</h3><a href="<?= $basePath ?>/index.php">Giới thiệu</a><a href="<?= $basePath ?>/views/products.php">Sản phẩm</a><a href="<?= $basePath ?>/index.php?action=policy">Chính sách mua hàng</a></div>
         <div><h3>Hỗ trợ khách hàng</h3><a href="<?= $basePath ?>/index.php?action=orders">Tra cứu đơn hàng</a><a href="<?= $basePath ?>/views/cart.php">Giỏ hàng</a><a href="<?= $basePath ?>/index.php?action=profile">Tài khoản</a></div>
         <div><h3>Liên hệ</h3><p class="mb-1">Hotline: <strong>1900 6868</strong></p><p class="mb-1">Email: nhom2@example.com</p><p class="mb-0">Thời gian: 8:00 – 21:00</p></div>
     </div>

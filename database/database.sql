@@ -86,4 +86,8 @@ CREATE TABLE order_items (
 
 INSERT INTO categories (name, slug) VALUES
     ('Thời trang', 'thoi-trang'),
-    ('Phụ kiện', 'phu-kien');
+    ('Phụ kiện', 'phu-kien'),
+    ('Điện thoại', 'dien-thoai'),
+    ('Laptop', 'laptop'),
+    ('Máy ảnh', 'may-anh'),
+    ('PC Gaming', 'pc-gaming');

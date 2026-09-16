@@ -29,7 +29,7 @@ Có thể tạo lại toàn bộ database cùng dữ liệu mẫu cho SHOP-17 b�
 php artisan migrate:fresh --seed
 ```
 
-Lệnh tạo một admin, một customer, các danh mục mẫu và tối thiểu 15 sản phẩm mẫu.
+Lệnh tạo một admin, một customer, các danh mục mẫu và 21 sản phẩm mẫu có gallery ba ảnh.
 
 Thông tin kết nối mặc định dành cho XAMPP nằm trong `config/database.php`. Nếu máy dùng cổng hoặc tài khoản khác, sao chép `config/database.local.example.php` thành `config/database.local.php` rồi chỉnh lại. File cục bộ này không được commit lên GitHub.
 

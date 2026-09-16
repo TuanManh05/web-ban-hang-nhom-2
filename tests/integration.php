@@ -25,9 +25,45 @@ $customer = $pdo->query("SELECT * FROM users WHERE role = 'customer' LIMIT 1")->
 $product = $pdo->query('SELECT * FROM products WHERE status = 1 AND stock >= 2 LIMIT 1')->fetch(PDO::FETCH_ASSOC);
 check((bool) $customer, 'Có tài khoản customer mẫu');
 check((bool) $product, 'Có sản phẩm đủ tồn kho');
-check((int) $pdo->query('SELECT COUNT(*) FROM products')->fetchColumn() === 15, 'Seeder tạo đủ 15 sản phẩm mẫu');
-check((int) $pdo->query('SELECT COUNT(*) FROM product_images')->fetchColumn() === 45, 'Seeder gắn đủ 3 ảnh cho mỗi sản phẩm');
-check((int) $pdo->query('SELECT COUNT(*) FROM (SELECT product_id FROM product_images GROUP BY product_id HAVING COUNT(*) = 3) galleries')->fetchColumn() === 15, 'Cả 15 sản phẩm đều có gallery 3 ảnh');
+check((int) $pdo->query('SELECT COUNT(*) FROM products')->fetchColumn() === 21, 'Seeder tạo đủ 21 sản phẩm mẫu');
+check((int) $pdo->query('SELECT COUNT(*) FROM product_images')->fetchColumn() === 63, 'Seeder gắn đủ 3 ảnh cho mỗi sản phẩm');
+check((int) $pdo->query('SELECT COUNT(*) FROM (SELECT product_id FROM product_images GROUP BY product_id HAVING COUNT(*) = 3) galleries')->fetchColumn() === 21, 'Cả 21 sản phẩm đều có gallery 3 ảnh');
+check((int) $pdo->query(
+    "SELECT COUNT(DISTINCT pi.image_path)
+     FROM product_images pi
+     JOIN products p ON p.id = pi.product_id
+     JOIN categories c ON c.id = p.category_id
+     WHERE c.slug = 'pc-gaming' AND pi.is_primary = 1"
+)->fetchColumn() === 3, 'Ba PC Gaming dùng ba ảnh đại diện khác nhau');
+check((int) $pdo->query(
+    "SELECT COUNT(*) - COUNT(DISTINCT pi.image_path)
+     FROM product_images pi
+     JOIN products p ON p.id = pi.product_id
+     JOIN categories c ON c.id = p.category_id
+     WHERE c.slug = 'pc-gaming'"
+)->fetchColumn() === 0, 'Toàn bộ gallery PC Gaming không có ảnh trùng nhau');
+$pcImagePaths = $pdo->query(
+    "SELECT pi.image_path
+     FROM product_images pi
+     JOIN products p ON p.id = pi.product_id
+     JOIN categories c ON c.id = p.category_id
+     WHERE c.slug = 'pc-gaming'"
+)->fetchAll(PDO::FETCH_COLUMN);
+$pcImageHashes = array_map(
+    static fn (string $imagePath): string => hash_file('sha256', __DIR__ . '/../uploads/' . $imagePath) ?: '',
+    $pcImagePaths
+);
+check(count($pcImageHashes) === 9 && count(array_unique($pcImageHashes)) === 9, 'Chín file ảnh PC Gaming có nội dung khác nhau');
+check((int) $pdo->query("SELECT COUNT(*) FROM products WHERE name REGEXP '^(Laptop|Điện thoại|Tai nghe|Máy ảnh|PC Gaming|Chuột|Bàn phím|Tay cầm)'")->fetchColumn() === 21, 'Tên sản phẩm mẫu đúng với tám nhóm ảnh');
+check((int) $pdo->query(
+    "SELECT COUNT(*) FROM products p
+     JOIN categories c ON c.id = p.category_id
+     WHERE (c.slug = 'laptop' AND p.name NOT LIKE 'Laptop%')
+        OR (c.slug = 'dien-thoai' AND p.name NOT LIKE 'Điện thoại%')
+        OR (c.slug = 'phu-kien' AND p.name NOT REGEXP '^(Tai nghe|Chuột|Bàn phím|Tay cầm)')
+        OR (c.slug = 'may-anh' AND p.name NOT LIKE 'Máy ảnh%')
+        OR (c.slug = 'pc-gaming' AND p.name NOT LIKE 'PC Gaming%')"
+)->fetchColumn() === 0, 'Tên sản phẩm khớp với danh mục');
 $galleryProduct = Product::findById((int) $product['id']);
 check($galleryProduct !== null && count($galleryProduct['images']) === 3, 'Trang chi tiết lấy đủ gallery sản phẩm');
 foreach ($galleryProduct['images'] as $image) {
@@ -81,8 +117,15 @@ check((float) $totalDesc[0]['total_amount'] >= (float) $totalDesc[count($totalDe
 check($orders->countSearch(['q' => '0911222333', 'status' => 'cancelled']) === 1, 'Đếm kết quả lọc đơn phục vụ phân trang Admin');
 check($orders->countForUser((int) $customer['id']) >= 3, 'Đếm đơn phục vụ phân trang khách hàng');
 
-$products = (new ProductModel($pdo))->searchProducts(['q' => (string) $product['name'], 'category_id' => null, 'sort' => 'price_asc', 'limit' => 12, 'offset' => 0]);
+$productModel = new ProductModel($pdo);
+$products = $productModel->searchProducts(['q' => (string) $product['name'], 'category_id' => null, 'sort' => 'price_asc', 'limit' => 12, 'offset' => 0]);
 check($products !== [], 'Tìm kiếm và sắp xếp sản phẩm');
+$accessoryResults = $productModel->searchProducts(['q' => 'Phụ kiện', 'category_id' => null, 'sort' => '', 'limit' => 20, 'offset' => 0]);
+check(count($accessoryResults) === 6, 'Tìm theo tên danh mục Phụ kiện trả đủ 6 sản phẩm');
+$accessoryCategory = $productModel->getCategoryBySlug('phu-kien');
+check($accessoryCategory !== false, 'Tìm được danh mục Phụ kiện bằng slug');
+$filteredAccessories = $productModel->searchProducts(['q' => '', 'category_id' => (int) $accessoryCategory['id'], 'sort' => '', 'limit' => 20, 'offset' => 0]);
+check(count($filteredAccessories) === 6, 'Lọc danh mục Phụ kiện trả đủ 6 sản phẩm');
 
 $users = new User($pdo);
 $users->updateName((int) $customer['id'], 'Khách đã cập nhật');

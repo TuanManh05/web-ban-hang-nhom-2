@@ -1,7 +1,7 @@
 # Nguồn ảnh sản phẩm mẫu
 
 Bộ ảnh sản phẩm mẫu trong `uploads/product-*.jpg` và `uploads/product-*.png`
-được lấy từ [Unsplash](https://unsplash.com/) để phục vụ mục đích minh họa cho đồ án.
+được lấy từ Unsplash và Pexels để phục vụ mục đích minh họa cho đồ án.
 
 Ảnh được nhóm theo bốn loại: laptop, điện thoại, phụ kiện và máy ảnh. Mỗi sản phẩm
 mẫu sử dụng ba ảnh trong nhóm tương ứng. Danh sách ảnh gốc được nhận diện bằng các
@@ -21,3 +21,26 @@ mã ảnh Unsplash sau:
   `1542567455-cd733f23fbb1`.
 
 Tham khảo điều khoản sử dụng tại [Unsplash License](https://unsplash.com/license).
+
+## Ảnh PC Gaming
+
+Ba bộ ảnh PC Gaming được lấy trực tiếp từ các trang sản phẩm tương ứng của
+[Tin Học Ngôi Sao](https://tinhocngoisao.com/). Mỗi mẫu dùng một bộ ba ảnh riêng,
+không dùng chung ảnh đại diện:
+
+- `product-pc-yasuo-*`: [PC Gaming STAR Yasuo](https://tinhocngoisao.com/products/pc-gaming-star-yasuo-intel-i5-12400f-rtx-3050-6g-h610m-ram-16gb-ssd-500gb).
+- `product-pc-storm-*`: [PC Gaming Storm](https://tinhocngoisao.com/products/pc-gaming-storm-intel-core-i5-12400f-ddr5-16gb-ssd-512gb-rtx-5060) và [PC Gaming Storm C](https://tinhocngoisao.com/products/pc-storm-c-intel-core-i5-12400f-ram-16gb-ssd-512-rtx-5060).
+- `product-pc-karmish-*`: [PC Gaming Karmish B Plus](https://tinhocngoisao.com/products/pc-star-karmish-b-plus-intel-core-i5-14400f-b760-ddr5-32gb-ssd-512-rtx-5060-wifi).
+
+Các ảnh này chỉ được dùng để minh họa trong đồ án học tập. Khi triển khai công
+khai hoặc thương mại, cần thay bằng ảnh do nhóm sở hữu hoặc được cấp quyền sử dụng.
+
+## Ảnh phụ kiện
+
+Các ảnh phụ kiện bổ sung được lấy từ [Pexels](https://www.pexels.com/) theo các mã ảnh:
+
+- Chuột gaming: `2115256`, `5241055`, `9620477`.
+- Bàn phím cơ: `11935539`, `5944189`, `18172216`.
+- Tay cầm chơi game: `12410982`, `14740027`, `5961235`.
+
+Tham khảo điều khoản sử dụng tại [Pexels License](https://www.pexels.com/license/).
