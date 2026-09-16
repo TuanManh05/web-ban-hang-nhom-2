@@ -18,11 +18,11 @@
                 <div class="promo-copy">
                     <span class="promo-label">ĐẠI TIỆC CÔNG NGHỆ</span>
                     <h1>NÂNG CẤP<br><em>HIỆU NĂNG</em></h1>
-                    <p>Giá tốt bất ngờ · Sản phẩm chính hãng<br>Ưu đãi dành riêng cho thành viên Nhóm 6</p>
+                    <p>Giá tốt bất ngờ · Sản phẩm chính hãng<br>Ưu đãi dành riêng cho khách hàng Nhóm 2</p>
                     <a href="<?= $basePath ?>/views/products.php" class="promo-button">MUA NGAY <span>→</span></a>
                 </div>
                 <div class="promo-visual" aria-hidden="true">
-                    <div class="monitor"><div class="monitor-screen"><span>N6</span></div><i></i></div>
+                    <div class="monitor"><div class="monitor-screen"><span>N2</span></div><i></i></div>
                     <div class="keyboard"></div>
                     <div class="glow-orb orb-one"></div><div class="glow-orb orb-two"></div>
                 </div>

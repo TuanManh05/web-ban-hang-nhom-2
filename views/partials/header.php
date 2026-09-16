@@ -24,7 +24,7 @@ $isProducts = str_ends_with($currentPath, '/products.php');
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#e11d2e">
-    <title><?= htmlspecialchars($pageTitle ?? 'Nhóm 6', ENT_QUOTES, 'UTF-8') ?> | Nhóm 6 Shop</title>
+    <title><?= htmlspecialchars($pageTitle ?? 'Nhóm 2', ENT_QUOTES, 'UTF-8') ?> | Nhóm 2 Shop</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= $basePath ?>/assets/css/app.css" rel="stylesheet">
 </head>
@@ -43,9 +43,9 @@ $isProducts = str_ends_with($currentPath, '/products.php');
 
     <div class="main-header">
         <div class="container header-grid">
-            <a class="store-logo" href="<?= $basePath ?>/index.php" aria-label="Nhóm 6 Shop - Trang chủ">
-                <span class="logo-mark">N6</span>
-                <span><strong>NHÓM 6</strong><small>TECH STORE</small></span>
+            <a class="store-logo" href="<?= $basePath ?>/index.php" aria-label="Nhóm 2 Shop - Trang chủ">
+                <span class="logo-mark">N2</span>
+                <span><strong>NHÓM 2</strong><small>TECH STORE</small></span>
             </a>
 
             <form class="header-search" method="get" action="<?= $basePath ?>/views/products.php" role="search"

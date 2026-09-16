@@ -68,7 +68,7 @@ declare(strict_types=1);
         <?php else: ?>
             <?php require __DIR__ . '/_invoice-body.php'; ?>
             <p class="text-center text-secondary small mt-5 mb-0">
-                Cảm ơn quý khách đã mua hàng tại Nhóm 6 Tech Store!
+                Cảm ơn quý khách đã mua hàng tại Nhóm 2 Tech Store!
             </p>
         <?php endif; ?>
     </div>

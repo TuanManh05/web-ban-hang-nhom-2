@@ -16,9 +16,9 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
--- Tài khoản quản trị mẫu: admin@nhom6.local / Admin@123
+-- Tài khoản quản trị mẫu: admin@nhom2.local / Admin@123
 INSERT INTO users (name, email, password, role, status) VALUES
-    ('Quản trị viên', 'admin@nhom6.local', '$2y$10$nQF1UlbmOMssNjyhcMGzU.ivwSKdywgQK1GPqaEGgCgRsUS1TS79y', 'admin', 1);
+    ('Quản trị viên', 'admin@nhom2.local', '$2y$10$nQF1UlbmOMssNjyhcMGzU.ivwSKdywgQK1GPqaEGgCgRsUS1TS79y', 'admin', 1);
 
 CREATE TABLE categories (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

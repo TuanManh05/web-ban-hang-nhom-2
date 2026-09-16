@@ -24,8 +24,8 @@ final class DatabaseSeeder
             );
 
             foreach ([
-                ['Quản trị viên', 'admin@nhom6.local', 'Admin@123', 'admin'],
-                ['Khách hàng mẫu', 'customer@nhom6.local', 'Customer@123', 'customer'],
+                ['Quản trị viên', 'admin@nhom2.local', 'Admin@123', 'admin'],
+                ['Khách hàng mẫu', 'customer@nhom2.local', 'Customer@123', 'customer'],
             ] as [$name, $email, $password, $role]) {
                 $userStatement->execute([
                     'name' => $name,
