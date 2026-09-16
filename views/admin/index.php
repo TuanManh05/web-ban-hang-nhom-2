@@ -113,8 +113,7 @@ if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] ?? '') !== 'admin') 
                 </div>
             </div>
         </div>
-    </div>
-</div>
+
         <div class="col-md-4">
             <div class="card h-100 shadow-sm border-0">
                 <div class="card-body p-4 text-center">
@@ -129,6 +128,8 @@ if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] ?? '') !== 'admin') 
                 </div>
             </div>
         </div>
+    </div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
