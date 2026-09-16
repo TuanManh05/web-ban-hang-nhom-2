@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../middleware/AuthMiddleware.php';
+require_once __DIR__ . '/../middleware/Security.php';
 
 final class AccountController
 {
@@ -24,7 +25,8 @@ final class AccountController
     public function updateProfile(): void
     {
         AuthMiddleware::requireLogin();
-        $this->requirePostAndCsrf();
+        Security::requirePost();
+        Security::verifyCsrf();
         $name = trim((string) ($_POST['name'] ?? ''));
         if (mb_strlen($name) < 2 || mb_strlen($name) > 100) {
             header('Location: index.php?action=profile&error=' . urlencode('Họ tên phải có từ 2 đến 100 ký tự.'));
@@ -39,7 +41,8 @@ final class AccountController
     public function changePassword(): void
     {
         AuthMiddleware::requireLogin();
-        $this->requirePostAndCsrf();
+        Security::requirePost();
+        Security::verifyCsrf();
         $user = $this->users->findById((int) $_SESSION['user']['id']);
         $current = (string) ($_POST['current_password'] ?? '');
         $password = (string) ($_POST['password'] ?? '');
@@ -54,12 +57,5 @@ final class AccountController
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         header('Location: index.php?action=profile&msg=' . urlencode('Đổi mật khẩu thành công.'));
         exit;
-    }
-
-    private function requirePostAndCsrf(): void
-    {
-        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') { http_response_code(405); exit('Phương thức không được hỗ trợ.'); }
-        $token = (string) ($_POST['csrf_token'] ?? '');
-        if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) { http_response_code(419); exit('Phiên làm việc đã hết hạn.'); }
     }
 }
