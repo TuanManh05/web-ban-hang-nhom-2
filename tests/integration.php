@@ -4,6 +4,7 @@ declare(strict_types=1);
 require __DIR__ . '/../config/database.php';
 require __DIR__ . '/../models/Order.php';
 require __DIR__ . '/../models/User.php';
+require __DIR__ . '/../models/Product.php';
 require __DIR__ . '/../models/ProductModel.php';
 
 $pdo = database();
@@ -24,6 +25,14 @@ $customer = $pdo->query("SELECT * FROM users WHERE role = 'customer' LIMIT 1")->
 $product = $pdo->query('SELECT * FROM products WHERE status = 1 AND stock >= 2 LIMIT 1')->fetch(PDO::FETCH_ASSOC);
 check((bool) $customer, 'Có tài khoản customer mẫu');
 check((bool) $product, 'Có sản phẩm đủ tồn kho');
+check((int) $pdo->query('SELECT COUNT(*) FROM products')->fetchColumn() === 15, 'Seeder tạo đủ 15 sản phẩm mẫu');
+check((int) $pdo->query('SELECT COUNT(*) FROM product_images')->fetchColumn() === 45, 'Seeder gắn đủ 3 ảnh cho mỗi sản phẩm');
+check((int) $pdo->query('SELECT COUNT(*) FROM (SELECT product_id FROM product_images GROUP BY product_id HAVING COUNT(*) = 3) galleries')->fetchColumn() === 15, 'Cả 15 sản phẩm đều có gallery 3 ảnh');
+$galleryProduct = Product::findById((int) $product['id']);
+check($galleryProduct !== null && count($galleryProduct['images']) === 3, 'Trang chi tiết lấy đủ gallery sản phẩm');
+foreach ($galleryProduct['images'] as $image) {
+    check(is_file(__DIR__ . '/../uploads/' . $image['image_path']), 'File ảnh sản phẩm tồn tại: ' . $image['image_path']);
+}
 
 $orders = new Order($pdo);
 $stockBefore = (int) $product['stock'];

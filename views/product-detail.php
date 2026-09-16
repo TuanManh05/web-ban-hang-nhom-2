@@ -11,7 +11,40 @@ require __DIR__ . '/partials/header.php';
     <p class="small text-secondary mb-3"><a class="text-decoration-none" href="<?= $basePath ?>/index.php">Trang chủ</a> / <a class="text-decoration-none" href="<?= $basePath ?>/views/products.php">Sản phẩm</a><?= $product ? ' / ' . htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8') : '' ?></p>
     <?php if ($product): ?>
         <div class="product-detail-card row g-4 g-lg-5">
-            <div class="col-md-5"><img src="<?= !empty($product['image_path']) ? htmlspecialchars($basePath . '/uploads/' . $product['image_path'], ENT_QUOTES, 'UTF-8') : $basePath . '/assets/img/tech-placeholder.svg' ?>" class="detail-image" alt="<?= htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8') ?>"></div>
+            <?php
+            $galleryImages = $product['images'] ?? [];
+            if ($galleryImages === []) {
+                $galleryImages = [['image_path' => null, 'is_primary' => 1]];
+            }
+            $mainImagePath = !empty($galleryImages[0]['image_path'])
+                ? $basePath . '/uploads/' . $galleryImages[0]['image_path']
+                : $basePath . '/assets/img/tech-placeholder.svg';
+            ?>
+            <div class="col-md-5">
+                <div class="product-gallery">
+                    <div class="detail-image-frame">
+                        <img id="productMainImage"
+                             src="<?= htmlspecialchars($mainImagePath, ENT_QUOTES, 'UTF-8') ?>"
+                             class="detail-image"
+                             alt="<?= htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8') ?>">
+                    </div>
+                    <?php if (count($galleryImages) > 1): ?>
+                        <div class="detail-thumbnails" aria-label="Ảnh sản phẩm">
+                            <?php foreach ($galleryImages as $index => $image): ?>
+                                <?php $imagePath = $basePath . '/uploads/' . $image['image_path']; ?>
+                                <button type="button"
+                                        class="detail-thumbnail<?= $index === 0 ? ' active' : '' ?>"
+                                        data-gallery-image="<?= htmlspecialchars($imagePath, ENT_QUOTES, 'UTF-8') ?>"
+                                        aria-label="Xem ảnh <?= $index + 1 ?> của <?= htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8') ?>"
+                                        aria-pressed="<?= $index === 0 ? 'true' : 'false' ?>">
+                                    <img src="<?= htmlspecialchars($imagePath, ENT_QUOTES, 'UTF-8') ?>"
+                                         alt="Ảnh <?= $index + 1 ?>">
+                                </button>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
             <div class="col-md-7">
                 <span class="detail-eyebrow"><?= htmlspecialchars((string) ($product['category_name'] ?? 'Sản phẩm công nghệ'), ENT_QUOTES, 'UTF-8') ?></span>
                 <h1 class="detail-title"><?= htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8') ?></h1>
@@ -35,4 +68,5 @@ require __DIR__ . '/partials/header.php';
         <div class="product-detail-card text-center py-5"><h1 class="h4 fw-bold mb-3">Sản phẩm không tồn tại</h1><p class="text-secondary">Sản phẩm bạn tìm có thể đã bị xoá hoặc đường dẫn không đúng.</p><a href="<?= $basePath ?>/index.php" class="btn btn-primary">Về trang chủ</a></div>
     <?php endif; ?>
 </section>
+<script src="<?= $basePath ?>/assets/js/product-gallery.js"></script>
 <?php require __DIR__ . '/partials/footer.php'; ?>

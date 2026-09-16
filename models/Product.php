@@ -33,18 +33,30 @@ final class Product
         $pdo = database();
 
         $stmt = $pdo->prepare(
-            'SELECT p.*, c.name AS category_name, pi.image_path
+            'SELECT p.*, c.name AS category_name
              FROM products p
              LEFT JOIN categories c ON c.id = p.category_id
-             LEFT JOIN product_images pi
-                 ON pi.product_id = p.id AND pi.is_primary = 1
              WHERE p.id = :id AND p.status = 1'
         );
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
 
-        $product = $stmt->fetch();
+        $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $product ?: null;
+        if (!$product) {
+            return null;
+        }
+
+        $imageStatement = $pdo->prepare(
+            'SELECT image_path, is_primary
+             FROM product_images
+             WHERE product_id = :product_id
+             ORDER BY is_primary DESC, id ASC'
+        );
+        $imageStatement->execute(['product_id' => $id]);
+        $product['images'] = $imageStatement->fetchAll(PDO::FETCH_ASSOC);
+        $product['image_path'] = $product['images'][0]['image_path'] ?? null;
+
+        return $product;
     }
 }
