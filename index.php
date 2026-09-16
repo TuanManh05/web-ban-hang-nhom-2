@@ -106,6 +106,11 @@ switch ($action) {
         AuthMiddleware::requireAdmin();
         require_once __DIR__ . '/views/admin/index.php';
         break;
+    case 'admin-stats':
+        AuthMiddleware::requireAdmin();
+        require_once __DIR__ .'/views/admin/stats.php';
+        break ; 
+    
 
     // ==========================================
     // 1. Luồng Quản lý Sản phẩm (Product CRUD)
