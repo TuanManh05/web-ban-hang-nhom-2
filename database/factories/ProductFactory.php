@@ -29,6 +29,9 @@ final class ProductFactory
         ['phu-kien', 'Chuột Gaming RGB', 'chuot-gaming-rgb-co-day', 690000, 32, 'Chuột gaming có dây với đèn RGB, cảm biến chính xác và thiết kế thuận tay cho các phiên chơi dài.'],
         ['phu-kien', 'Bàn Phím Cơ RGB', 'ban-phim-co-gaming-rgb', 1490000, 24, 'Bàn phím cơ gaming có đèn RGB, phản hồi phím rõ và bố cục thuận tiện cho chơi game lẫn làm việc.'],
         ['phu-kien', 'Tay Cầm Không Dây', 'tay-cam-choi-game-khong-day', 1290000, 20, 'Tay cầm chơi game không dây với hai cần analog, bố cục nút quen thuộc và kết nối ổn định.'],
+        ['linh-kien', 'SSD Patriot P300 512GB', 'ssd-patriot-p300-512gb', 760000, 18, 'SSD M.2 2280 NVMe PCIe Gen3 x4, dung lượng 512GB, tốc độ đọc/ghi tối đa khoảng 1700/1200MB/s.'],
+        ['linh-kien', 'RAM SSTC 8GB DDR4 3200', 'ram-sstc-8gb-ddr4-3200', 1350000, 24, 'RAM PC 8GB (1x8GB), chuẩn DDR4, bus 3200MHz, tương thích nền tảng Intel và AMD.'],
+        ['linh-kien', 'RAM VSP 16GB DDR4 3200', 'ram-vsp-16gb-ddr4-3200', 2490000, 16, 'RAM PC 16GB (1x16GB), chuẩn DDR4, bus 3200MHz, hỗ trợ Intel và AMD.'],
     ];
 
     public static function generate(array $categoryIdsBySlug): array

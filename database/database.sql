@@ -93,7 +93,8 @@ INSERT INTO categories (name, slug) VALUES
     ('Điện thoại', 'dien-thoai'),
     ('Laptop', 'laptop'),
     ('Máy ảnh', 'may-anh'),
-    ('PC Gaming', 'pc-gaming');
+    ('PC Gaming', 'pc-gaming'),
+    ('Linh kiện', 'linh-kien');
 
 -- Dữ liệu sản phẩm có sẵn để chỉ cần import file SQL là chạy được website.
 INSERT INTO products (id, category_id, name, slug, description, price, stock, status) VALUES
@@ -117,7 +118,10 @@ INSERT INTO products (id, category_id, name, slug, description, price, stock, st
     (18, 6, 'PC Gaming Karmish', 'pc-gaming-karmish', 'Sản phẩm mẫu phục vụ phát triển: Intel Core i5-14400F, RTX 5060, RAM DDR5 16GB, SSD 512GB và Wi-Fi.', 30451000, 5, 1),
     (19, 2, 'Chuột Gaming RGB', 'chuot-gaming-rgb-co-day', 'Sản phẩm mẫu phục vụ phát triển: Chuột gaming có dây với đèn RGB, cảm biến chính xác và thiết kế thuận tay cho các phiên chơi dài.', 690000, 32, 1),
     (20, 2, 'Bàn Phím Cơ RGB', 'ban-phim-co-gaming-rgb', 'Sản phẩm mẫu phục vụ phát triển: Bàn phím cơ gaming có đèn RGB, phản hồi phím rõ và bố cục thuận tiện cho chơi game lẫn làm việc.', 1490000, 24, 1),
-    (21, 2, 'Tay Cầm Không Dây', 'tay-cam-choi-game-khong-day', 'Sản phẩm mẫu phục vụ phát triển: Tay cầm chơi game không dây với hai cần analog, bố cục nút quen thuộc và kết nối ổn định.', 1290000, 20, 1);
+    (21, 2, 'Tay Cầm Không Dây', 'tay-cam-choi-game-khong-day', 'Sản phẩm mẫu phục vụ phát triển: Tay cầm chơi game không dây với hai cần analog, bố cục nút quen thuộc và kết nối ổn định.', 1290000, 20, 1),
+    (22, 7, 'SSD Patriot P300 512GB', 'ssd-patriot-p300-512gb', 'Sản phẩm mẫu phục vụ phát triển: SSD M.2 2280 NVMe PCIe Gen3 x4, dung lượng 512GB, tốc độ đọc/ghi tối đa khoảng 1700/1200MB/s.', 760000, 18, 1),
+    (23, 7, 'RAM SSTC 8GB DDR4 3200', 'ram-sstc-8gb-ddr4-3200', 'Sản phẩm mẫu phục vụ phát triển: RAM PC 8GB (1x8GB), chuẩn DDR4, bus 3200MHz, tương thích nền tảng Intel và AMD.', 1350000, 24, 1),
+    (24, 7, 'RAM VSP 16GB DDR4 3200', 'ram-vsp-16gb-ddr4-3200', 'Sản phẩm mẫu phục vụ phát triển: RAM PC 16GB (1x16GB), chuẩn DDR4, bus 3200MHz, hỗ trợ Intel và AMD.', 2490000, 16, 1);
 
 INSERT INTO product_images (product_id, image_path, is_primary) VALUES
     (1, 'product-laptop-01.jpg', 1), (1, 'product-laptop-02.jpg', 0), (1, 'product-laptop-03.jpg', 0),
@@ -140,4 +144,7 @@ INSERT INTO product_images (product_id, image_path, is_primary) VALUES
     (18, 'product-pc-karmish-01.png', 1), (18, 'product-pc-karmish-02.jpg', 0), (18, 'product-pc-karmish-03.jpg', 0),
     (19, 'product-mouse-01.jpg', 1), (19, 'product-mouse-02.jpg', 0), (19, 'product-mouse-03.jpg', 0),
     (20, 'product-keyboard-02.jpg', 1), (20, 'product-keyboard-01.jpg', 0), (20, 'product-keyboard-03.jpg', 0),
-    (21, 'product-controller-03.jpg', 1), (21, 'product-controller-01.jpg', 0), (21, 'product-controller-02.jpg', 0);
+    (21, 'product-controller-03.jpg', 1), (21, 'product-controller-01.jpg', 0), (21, 'product-controller-02.jpg', 0),
+    (22, 'product-component-ssd-patriot-p300-512gb.jpg', 1),
+    (23, 'product-component-ram-sstc-8gb-3200.png', 1),
+    (24, 'product-component-ram-vsp-16gb-3200.jpg', 1);

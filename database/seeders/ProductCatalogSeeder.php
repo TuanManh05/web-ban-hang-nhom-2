@@ -11,7 +11,7 @@ final class ProductCatalogSeeder
     }
 
     /**
-     * Tạo mới hoặc đồng bộ 21 sản phẩm mẫu mà không làm đổi ID sản phẩm cũ.
+     * Tạo mới hoặc đồng bộ danh mục sản phẩm mẫu mà không làm đổi ID sản phẩm cũ.
      */
     public function run(): void
     {

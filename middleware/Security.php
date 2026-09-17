@@ -20,6 +20,20 @@ final class Security
     public static function startSession(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
+            // Không dùng C:\xampp\tmp vì tiến trình chạy web có thể không có
+            // quyền ghi tại đó. Lưu session trong dự án để mọi PHP worker
+            // cùng đọc được một phiên đăng nhập.
+            $sessionPath = dirname(__DIR__) . '/storage/sessions';
+            if (!is_dir($sessionPath)
+                && !mkdir($sessionPath, 0700, true)
+                && !is_dir($sessionPath)) {
+                throw new RuntimeException('Không thể tạo thư mục lưu phiên làm việc.');
+            }
+            if (!is_writable($sessionPath)) {
+                throw new RuntimeException('Thư mục lưu phiên làm việc không có quyền ghi.');
+            }
+
+            session_save_path($sessionPath);
             ini_set('session.use_strict_mode', '1');
             $isHttps = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
             session_set_cookie_params([
@@ -29,7 +43,9 @@ final class Security
                 'httponly' => true,
                 'samesite' => 'Lax',
             ]);
-            session_start();
+            if (!session_start()) {
+                throw new RuntimeException('Không thể khởi tạo phiên làm việc.');
+            }
         }
 
         self::enforceInactivityTimeout();
@@ -96,8 +112,22 @@ final class Security
 
         $token = (string) ($_POST['csrf_token'] ?? '');
         if (!isset($_SESSION['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $token)) {
-            http_response_code(419);
-            exit('Phiên làm việc đã hết hạn hoặc token không hợp lệ. Vui lòng tải lại trang.');
+            // Tạo token mới và đưa người dùng về một trang GET an toàn thay vì
+            // để họ mắc kẹt ở endpoint POST với màn hình lỗi trắng.
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            $_SESSION['flash'] = [
+                'type' => 'warning',
+                'text' => 'Phiên làm việc đã được làm mới. Vui lòng thử lại.',
+            ];
+
+            $action = (string) ($_GET['action'] ?? '');
+            $redirect = match ($action) {
+                'login-submit' => 'index.php?action=login',
+                'register-submit' => 'index.php?action=register',
+                default => 'index.php',
+            };
+            header('Location: ' . $redirect, true, 303);
+            exit;
         }
     }
 

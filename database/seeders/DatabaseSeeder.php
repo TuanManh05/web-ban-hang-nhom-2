@@ -48,6 +48,7 @@ final class DatabaseSeeder
                 ['Phụ kiện', 'phu-kien'],
                 ['Máy ảnh', 'may-anh'],
                 ['PC Gaming', 'pc-gaming'],
+                ['Linh kiện', 'linh-kien'],
             ] as [$name, $slug]) {
                 $categoryStatement->execute(['name' => $name, 'slug' => $slug]);
             }

@@ -26,9 +26,9 @@ $customer = $pdo->query("SELECT * FROM users WHERE role = 'customer' LIMIT 1")->
 $product = $pdo->query('SELECT * FROM products WHERE status = 1 AND stock >= 2 LIMIT 1')->fetch(PDO::FETCH_ASSOC);
 check((bool) $customer, 'Có tài khoản customer mẫu');
 check((bool) $product, 'Có sản phẩm đủ tồn kho');
-check((int) $pdo->query('SELECT COUNT(*) FROM products')->fetchColumn() === 21, 'Seeder tạo đủ 21 sản phẩm mẫu');
-check((int) $pdo->query('SELECT COUNT(*) FROM product_images')->fetchColumn() === 63, 'Seeder gắn đủ 3 ảnh cho mỗi sản phẩm');
-check((int) $pdo->query('SELECT COUNT(*) FROM (SELECT product_id FROM product_images GROUP BY product_id HAVING COUNT(*) = 3) galleries')->fetchColumn() === 21, 'Cả 21 sản phẩm đều có gallery 3 ảnh');
+check((int) $pdo->query('SELECT COUNT(*) FROM products')->fetchColumn() === 24, 'Seeder tạo đủ 24 sản phẩm mẫu');
+check((int) $pdo->query('SELECT COUNT(*) FROM product_images')->fetchColumn() === 66, 'Seeder gắn đủ 66 ảnh mẫu');
+check((int) $pdo->query('SELECT COUNT(*) FROM (SELECT product_id FROM product_images GROUP BY product_id HAVING COUNT(*) = 3) galleries')->fetchColumn() === 21, 'Hai mươi mốt sản phẩm cũ có gallery 3 ảnh');
 check((int) $pdo->query(
     "SELECT COUNT(DISTINCT pi.image_path)
      FROM product_images pi
@@ -55,7 +55,7 @@ $pcImageHashes = array_map(
     $pcImagePaths
 );
 check(count($pcImageHashes) === 9 && count(array_unique($pcImageHashes)) === 9, 'Chín file ảnh PC Gaming có nội dung khác nhau');
-check((int) $pdo->query("SELECT COUNT(*) FROM products WHERE name REGEXP '^(Laptop|Điện thoại|Tai nghe|Máy ảnh|PC Gaming|Chuột|Bàn phím|Tay cầm)'")->fetchColumn() === 21, 'Tên sản phẩm mẫu đúng với tám nhóm ảnh');
+check((int) $pdo->query("SELECT COUNT(*) FROM products WHERE name REGEXP '^(Laptop|Điện thoại|Tai nghe|Máy ảnh|PC Gaming|Chuột|Bàn phím|Tay cầm|SSD|RAM)'")->fetchColumn() === 24, 'Tên sản phẩm mẫu đúng với các nhóm ảnh');
 check((int) $pdo->query(
     "SELECT COUNT(*) FROM products p
      JOIN categories c ON c.id = p.category_id
@@ -63,8 +63,33 @@ check((int) $pdo->query(
         OR (c.slug = 'dien-thoai' AND p.name NOT LIKE 'Điện thoại%')
         OR (c.slug = 'phu-kien' AND p.name NOT REGEXP '^(Tai nghe|Chuột|Bàn phím|Tay cầm)')
         OR (c.slug = 'may-anh' AND p.name NOT LIKE 'Máy ảnh%')
-        OR (c.slug = 'pc-gaming' AND p.name NOT LIKE 'PC Gaming%')"
+        OR (c.slug = 'pc-gaming' AND p.name NOT LIKE 'PC Gaming%')
+        OR (c.slug = 'linh-kien' AND p.name NOT REGEXP '^(SSD|RAM)')"
 )->fetchColumn() === 0, 'Tên sản phẩm khớp với danh mục');
+$componentRows = $pdo->query(
+    "SELECT p.name, p.price, pi.image_path
+     FROM products p
+     JOIN categories c ON c.id = p.category_id
+     LEFT JOIN product_images pi ON pi.product_id = p.id AND pi.is_primary = 1
+     WHERE c.slug = 'linh-kien'
+     ORDER BY p.id"
+)->fetchAll(PDO::FETCH_ASSOC);
+check(count($componentRows) === 3, 'Danh mục Linh kiện có đủ ba sản phẩm');
+foreach ($componentRows as $componentRow) {
+    check((float) $componentRow['price'] > 0, 'Linh kiện có giá: ' . $componentRow['name']);
+    check(
+        is_file(__DIR__ . '/../uploads/' . $componentRow['image_path']),
+        'Linh kiện có ảnh thật: ' . $componentRow['name']
+    );
+}
+$featuredCategories = Product::featuredCategories();
+check($featuredCategories !== [], 'Menu trang chủ có danh mục nổi bật');
+foreach ($featuredCategories as $featuredCategory) {
+    check(
+        (int) $featuredCategory['product_count'] > 0,
+        'Danh mục nổi bật có sản phẩm: ' . $featuredCategory['name']
+    );
+}
 $galleryProduct = Product::findById((int) $product['id']);
 check($galleryProduct !== null && count($galleryProduct['images']) === 3, 'Trang chi tiết lấy đủ gallery sản phẩm');
 foreach ($galleryProduct['images'] as $image) {

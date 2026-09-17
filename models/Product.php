@@ -5,6 +5,27 @@ declare(strict_types=1);
 final class Product
 {
     /**
+     * Lấy các danh mục đang hiển thị và thực sự có sản phẩm để menu trang chủ
+     * không dẫn tới những bộ lọc rỗng hoặc danh mục đã bị tắt.
+     */
+    public static function featuredCategories(): array
+    {
+        $pdo = database();
+
+        $sql = "SELECT c.name, c.slug, COUNT(p.id) AS product_count
+                FROM categories c
+                INNER JOIN products p
+                    ON p.category_id = c.id AND p.status = 1
+                WHERE c.status = 1
+                GROUP BY c.id, c.name, c.slug
+                HAVING COUNT(p.id) > 0
+                ORDER BY FIELD(c.slug, 'pc-gaming', 'laptop', 'linh-kien', 'phu-kien', 'dien-thoai', 'may-anh'),
+                         c.name ASC";
+
+        return $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Lấy danh sách sản phẩm còn bán, kèm ảnh đại diện (is_primary = 1) nếu có.
      */
     public static function featured(int $limit = 8): array
