@@ -1,7 +1,6 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/../../middleware/Security.php';
+Security::startSession();
 
 if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] ?? '') !== 'admin') {
     header('Location: ../../index.php?action=login&error=' . urlencode('Bạn không có quyền truy cập trang quản trị.'));
@@ -93,7 +92,7 @@ if (!isset($_SESSION['user']) || ($_SESSION['user']['role'] ?? '') !== 'admin') 
                         <i class="bi bi-tags fs-3"></i>
                     </div>
                     <h5 class="card-title fw-bold">Quản lý Danh mục</h5>
-                    <p class="card-text text-muted small">Phân loại sản phẩm và quản lý danh mục bánh.</p>
+                    <p class="card-text text-muted small">Phân loại sản phẩm và quản lý danh mục công nghệ.</p>
                     <a href="index.php?action=category-index" class="btn btn-success w-100 mt-2">
                         <i class="bi bi-arrow-right-circle me-1"></i>Truy cập Danh mục
                     </a>

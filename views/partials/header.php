@@ -1,5 +1,8 @@
 <?php declare(strict_types=1);
 
+require_once __DIR__ . '/../../middleware/Security.php';
+Security::startSession();
+
 $documentRoot = realpath($_SERVER['DOCUMENT_ROOT'] ?? '');
 $projectRoot = realpath(__DIR__ . '/../..');
 $basePath = '';
@@ -9,10 +12,6 @@ if ($documentRoot && $projectRoot && str_starts_with($projectRoot, $documentRoot
 
 require_once __DIR__ . '/../../models/Cart.php';
 $cartCount = Cart::getTotalQuantity();
-
-if (!isset($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
 
 $currentPath = str_replace('\\', '/', $_SERVER['PHP_SELF'] ?? '');
 $isHome = str_ends_with($currentPath, '/index.php') && (($_GET['action'] ?? 'home') === 'home');

@@ -50,7 +50,7 @@ require __DIR__ . '/partials/header.php';
                 <h1 class="detail-title"><?= htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8') ?></h1>
                 <div class="rating mb-2"><span>★★★★★</span><small>4.9 · Sản phẩm chính hãng</small></div>
                 <div class="detail-price"><?= number_format((float) $product['price'], 0, ',', '.') ?>₫</div>
-                <p class="text-secondary lh-lg"><?= nl2br(htmlspecialchars((string) ($product['description'] ?? 'Sản phẩm công nghệ chất lượng, phù hợp cho nhu cầu học tập, làm việc và giải trí.'), ENT_QUOTES, 'UTF-8')) ?></p>
+                <div class="text-secondary lh-lg product-description"><?= Security::renderRichText((string) ($product['description'] ?? 'Sản phẩm công nghệ chất lượng, phù hợp cho nhu cầu học tập, làm việc và giải trí.')) ?></div>
                 <span class="detail-stock">✓ Còn <?= (int) $product['stock'] ?> sản phẩm</span>
                 <div class="border-top mt-4 pt-4">
                     <?php if ((int) $product['status'] === 1 && (int) $product['stock'] > 0): ?>

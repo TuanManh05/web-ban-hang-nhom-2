@@ -9,6 +9,19 @@ Bài tập nhóm cuối kỳ môn Lập trình Web, xây dựng bằng PHP thu�
 - HTML, CSS, JavaScript, Bootstrap 5
 - Chart.js cho trang thống kê quản trị
 
+## Chức năng theo yêu cầu đề bài
+
+- Trang khách hàng và trang quản trị riêng, có phân quyền bằng session.
+- Đăng ký, đăng nhập, đăng xuất, hồ sơ tài khoản và giỏ hàng lưu trong session.
+- CRUD danh mục, sản phẩm và quản lý trạng thái đơn hàng.
+- Tìm kiếm, lọc, sắp xếp và phân trang sản phẩm/đơn hàng.
+- Upload đồng thời tối đa 5 ảnh cho một sản phẩm; hỗ trợ JPG, PNG và WEBP.
+- Trình soạn thảo có định dạng cho mô tả sản phẩm.
+- Dashboard dùng Chart.js hiển thị doanh thu 7 ngày, trạng thái đơn và sản phẩm bán chạy.
+- Giao diện Bootstrap responsive trên máy tính và điện thoại.
+
+Xem bảng đối chiếu chi tiết tại [`docs/requirements-checklist.md`](docs/requirements-checklist.md).
+
 ## Cài đặt trên Windows
 
 1. Cài XAMPP vào `C:\xampp`.

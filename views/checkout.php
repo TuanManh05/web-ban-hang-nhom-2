@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/Cart.php';
+require_once __DIR__ . '/../middleware/Security.php';
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+Security::startSession();
 
 // Trang này có thể được mở qua index.php?action=checkout (URL ở gốc site),
 // nên cần tự tính $basePath ở đây để dùng cho redirect phía dưới, trước khi
@@ -33,10 +32,6 @@ if (empty($items)) {
     exit;
 }
 
-// OrderController chỉ kiểm tra csrf_token, không tự sinh — nếu chưa có thì tạo ở đây
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
 $csrfToken = $_SESSION['csrf_token'];
 
 // Lỗi & dữ liệu cũ do OrderController::store() lưu vào session trước khi redirect về

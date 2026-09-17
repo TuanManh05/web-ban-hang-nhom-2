@@ -62,43 +62,147 @@ class ProductModel {
     }
 
     // Thêm sản phẩm mới (Đã có description)
-    public function insertProduct($data) {
-        $sql = "INSERT INTO products (category_id, name, slug, price, stock, description, status) 
-                VALUES (:category_id, :name, :slug, :price, :stock, :description, :status)";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            ':category_id' => $data['category_id'],
-            ':name'        => $data['name'],
-            ':slug'        => $data['slug'],
-            ':price'       => $data['price'],
-            ':stock'       => $data['stock'],
-            ':description' => $data['description'],
-            ':status'      => $data['status']
-        ]);
+    public function insertProduct($data, array $imagePaths = []): int {
+        $this->pdo->beginTransaction();
+
+        try {
+            $sql = "INSERT INTO products (category_id, name, slug, price, stock, description, status)
+                    VALUES (:category_id, :name, :slug, :price, :stock, :description, :status)";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([
+                ':category_id' => $data['category_id'],
+                ':name'        => $data['name'],
+                ':slug'        => $data['slug'],
+                ':price'       => $data['price'],
+                ':stock'       => $data['stock'],
+                ':description' => $data['description'],
+                ':status'      => $data['status']
+            ]);
+
+            $productId = (int) $this->pdo->lastInsertId();
+            $this->insertProductImages($productId, $imagePaths);
+            $this->pdo->commit();
+
+            return $productId;
+        } catch (Throwable $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            throw $e;
+        }
     }
 
     // Cập nhật sản phẩm (Đã có description)
-    public function updateProduct($id, $data) {
-        $sql = "UPDATE products 
-                SET category_id = :category_id, 
-                    name = :name, 
-                    slug = :slug, 
-                    price = :price, 
-                    stock = :stock, 
-                    description = :description, 
-                    status = :status 
-                WHERE id = :id";
-        $stmt = $this->pdo->prepare($sql);
-        return $stmt->execute([
-            ':id'          => $id,
-            ':category_id' => $data['category_id'],
-            ':name'        => $data['name'],
-            ':slug'        => $data['slug'],
-            ':price'       => $data['price'],
-            ':stock'       => $data['stock'],
-            ':description' => $data['description'],
-            ':status'      => $data['status']
-        ]);
+    public function updateProduct($id, $data, array $newImagePaths = [], array $deleteImageIds = []): array {
+        $this->pdo->beginTransaction();
+
+        try {
+            $sql = "UPDATE products
+                    SET category_id = :category_id,
+                        name = :name,
+                        slug = :slug,
+                        price = :price,
+                        stock = :stock,
+                        description = :description,
+                        status = :status
+                    WHERE id = :id";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([
+                ':id'          => $id,
+                ':category_id' => $data['category_id'],
+                ':name'        => $data['name'],
+                ':slug'        => $data['slug'],
+                ':price'       => $data['price'],
+                ':stock'       => $data['stock'],
+                ':description' => $data['description'],
+                ':status'      => $data['status']
+            ]);
+
+            $deletedPaths = $this->deleteProductImages((int) $id, $deleteImageIds);
+            $this->insertProductImages((int) $id, $newImagePaths);
+            $this->ensurePrimaryImage((int) $id);
+            $this->pdo->commit();
+
+            return $deletedPaths;
+        } catch (Throwable $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            throw $e;
+        }
+    }
+
+    public function getProductImages(int $productId): array {
+        $stmt = $this->pdo->prepare(
+            'SELECT id, product_id, image_path, is_primary
+             FROM product_images
+             WHERE product_id = ?
+             ORDER BY is_primary DESC, id ASC'
+        );
+        $stmt->execute([$productId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    private function insertProductImages(int $productId, array $imagePaths): void {
+        if ($imagePaths === []) {
+            return;
+        }
+
+        $hasPrimaryStmt = $this->pdo->prepare(
+            'SELECT COUNT(*) FROM product_images WHERE product_id = ? AND is_primary = 1'
+        );
+        $hasPrimaryStmt->execute([$productId]);
+        $hasPrimary = (int) $hasPrimaryStmt->fetchColumn() > 0;
+        $insert = $this->pdo->prepare(
+            'INSERT INTO product_images (product_id, image_path, is_primary) VALUES (?, ?, ?)'
+        );
+
+        foreach ($imagePaths as $imagePath) {
+            $insert->execute([$productId, $imagePath, $hasPrimary ? 0 : 1]);
+            $hasPrimary = true;
+        }
+    }
+
+    private function deleteProductImages(int $productId, array $imageIds): array {
+        $imageIds = array_values(array_unique(array_filter(array_map('intval', $imageIds), static fn (int $id): bool => $id > 0)));
+        if ($imageIds === []) {
+            return [];
+        }
+
+        $placeholders = implode(',', array_fill(0, count($imageIds), '?'));
+        $params = array_merge([$productId], $imageIds);
+        $select = $this->pdo->prepare(
+            "SELECT image_path FROM product_images WHERE product_id = ? AND id IN ($placeholders)"
+        );
+        $select->execute($params);
+        $paths = $select->fetchAll(PDO::FETCH_COLUMN);
+
+        $delete = $this->pdo->prepare(
+            "DELETE FROM product_images WHERE product_id = ? AND id IN ($placeholders)"
+        );
+        $delete->execute($params);
+
+        return array_map('strval', $paths);
+    }
+
+    private function ensurePrimaryImage(int $productId): void {
+        $primary = $this->pdo->prepare(
+            'SELECT COUNT(*) FROM product_images WHERE product_id = ? AND is_primary = 1'
+        );
+        $primary->execute([$productId]);
+        if ((int) $primary->fetchColumn() > 0) {
+            return;
+        }
+
+        $first = $this->pdo->prepare(
+            'SELECT id FROM product_images WHERE product_id = ? ORDER BY id ASC LIMIT 1'
+        );
+        $first->execute([$productId]);
+        $imageId = (int) $first->fetchColumn();
+        if ($imageId > 0) {
+            $setPrimary = $this->pdo->prepare('UPDATE product_images SET is_primary = 1 WHERE id = ?');
+            $setPrimary->execute([$imageId]);
+        }
     }
 
     // Xóa sản phẩm
