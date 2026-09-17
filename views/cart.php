@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $redirectTo = $selfPath;
     if (
         !empty($_POST['redirect'])
-        && preg_match('#^/?[a-zA-Z0-9_\-]+(?:/[a-zA-Z0-9_\-]+)*\.php(?:\?[a-zA-Z0-9=&%._\-\[\]]*)?$#', (string) $_POST['redirect'])
+        && preg_match('#^/?[a-zA-Z0-9_\-]+(?:/[a-zA-Z0-9_\-]+)*\.php(?:\?[a-zA-Z0-9=&%+._\-\[\]]*)?$#', (string) $_POST['redirect'])
     ) {
         $redirectTo = $_POST['redirect'];
     }

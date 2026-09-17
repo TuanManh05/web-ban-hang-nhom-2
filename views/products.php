@@ -36,6 +36,29 @@ $filters = ['q' => $keyword, 'category_id' => $categoryId ?: null, 'sort' => $so
 $products = $productModel->searchProducts($filters);
 $totalProducts = $productModel->countSearchProducts($filters);
 $totalPages = (int) ceil($totalProducts / $perPage);
+
+// Giữ nguyên trang danh mục/bộ lọc hiện tại sau khi thêm sản phẩm vào giỏ.
+// Chỉ đưa các tham số đã biết vào URL để không chuyển tiếp dữ liệu ngoài ý muốn.
+$returnParams = [];
+if ($keyword !== '') {
+    $returnParams['q'] = $keyword;
+}
+if ($categorySlug !== '') {
+    $returnParams['category'] = $categorySlug;
+} elseif ($categoryId > 0) {
+    $returnParams['category_id'] = $categoryId;
+}
+if ($sort !== '') {
+    $returnParams['sort'] = $sort;
+}
+if ($page > 1) {
+    $returnParams['page'] = $page;
+}
+$catalogReturnUrl = 'products.php';
+if ($returnParams !== []) {
+    $catalogReturnUrl .= '?' . http_build_query($returnParams);
+}
+
 $pageTitle = 'Sản phẩm';
 require __DIR__ . '/partials/header.php';
 ?>
@@ -66,7 +89,7 @@ require __DIR__ . '/partials/header.php';
                     <p class="product-price"><?= number_format((float) $product['price'], 0, ',', '.') ?>₫</p>
                     <p class="old-price"><?= number_format((float) $product['price'] * 1.12, 0, ',', '.') ?>₫</p>
                     <?php if ((int) $product['stock'] > 0): ?>
-                        <form method="post" action="<?= $basePath ?>/views/cart.php"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>"><input type="hidden" name="action" value="add"><input type="hidden" name="product_id" value="<?= (int) $product['id'] ?>"><input type="hidden" name="quantity" value="1"><input type="hidden" name="redirect" value="<?= $basePath ?>/views/products.php"><button class="add-cart-button" type="submit"><span>🛒</span> THÊM VÀO GIỎ</button></form>
+                        <form method="post" action="<?= $basePath ?>/views/cart.php"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>"><input type="hidden" name="action" value="add"><input type="hidden" name="product_id" value="<?= (int) $product['id'] ?>"><input type="hidden" name="quantity" value="1"><input type="hidden" name="redirect" value="<?= htmlspecialchars($catalogReturnUrl, ENT_QUOTES, 'UTF-8') ?>"><button class="add-cart-button" type="submit"><span>🛒</span> THÊM VÀO GIỎ</button></form>
                     <?php else: ?><button class="add-cart-button disabled" type="button" disabled>HẾT HÀNG</button><?php endif; ?>
                 </div>
             </article>
