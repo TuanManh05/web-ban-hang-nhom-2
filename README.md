@@ -49,9 +49,8 @@ Thông tin kết nối mặc định dành cho XAMPP nằm trong `config/databas
 ## Quy trình Git
 
 - `main`: phiên bản ổn định để nộp bài.
-- `develop`: tích hợp công việc của nhóm.
 - Mỗi task dùng nhánh riêng, ví dụ `feature/SHOP-3-authentication`.
-- Tạo Pull Request vào `develop`; không push chức năng trực tiếp vào `main`.
+- Tạo Pull Request vào main khi được 1 người review code.
 
 Quy ước commit: `feat`, `fix`, `ui`, `docs`, `test`, `chore`.
 
