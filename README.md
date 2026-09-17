@@ -1,4 +1,4 @@
-# Website bán hàng cơ bản - Nhóm 2
+# Website bán hàng công nghệ - Nhóm 2
 
 Bài tập nhóm cuối kỳ môn Lập trình Web, xây dựng bằng PHP thuần, MariaDB/MySQL, Bootstrap và Chart.js.
 
@@ -15,13 +15,13 @@ Bài tập nhóm cuối kỳ môn Lập trình Web, xây dựng bằng PHP thu�
 2. Clone repository vào `C:\xampp\htdocs\web-ban-hang-nhom-6`.
 3. Mở XAMPP Control Panel, khởi động Apache và MySQL.
 4. Truy cập `http://localhost/phpmyadmin`.
-5. Chọn **Import** và nhập file `database/database.sql`.
+5. Chọn **Import** và nhập file `database/database.sql`. File này tạo sẵn 2 tài khoản mẫu, 6 danh mục, 21 sản phẩm và 63 bản ghi ảnh.
 6. Mở `http://localhost/web-ban-hang-nhom-6`.
 
-Tài khoản quản trị mẫu sau khi import database:
+Tài khoản mẫu sau khi import database:
 
-- Email: `admin@nhom2.local`
-- Mật khẩu: `Admin@123`
+- Quản trị viên: `admin@nhom2.local` / `Admin@123`
+- Khách hàng: `customer@nhom2.local` / `Customer@123`
 
 Có thể tạo lại toàn bộ database cùng dữ liệu mẫu cho SHOP-17 bằng lệnh:
 
@@ -29,7 +29,7 @@ Có thể tạo lại toàn bộ database cùng dữ liệu mẫu cho SHOP-17 b�
 php artisan migrate:fresh --seed
 ```
 
-Lệnh tạo một admin, một customer, các danh mục mẫu và 21 sản phẩm mẫu có gallery ba ảnh.
+Đây là script dòng lệnh riêng của dự án PHP thuần, không phải Laravel Artisan. Lệnh xóa dữ liệu hiện có rồi tạo lại một admin, một customer, các danh mục mẫu và 21 sản phẩm mẫu có gallery ba ảnh.
 
 Thông tin kết nối mặc định dành cho XAMPP nằm trong `config/database.php`. Nếu máy dùng cổng hoặc tài khoản khác, sao chép `config/database.local.example.php` thành `config/database.local.php` rồi chỉnh lại. File cục bộ này không được commit lên GitHub.
 
