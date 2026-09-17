@@ -6,6 +6,7 @@ require __DIR__ . '/../models/Order.php';
 require __DIR__ . '/../models/User.php';
 require __DIR__ . '/../models/Product.php';
 require __DIR__ . '/../models/ProductModel.php';
+require __DIR__ . '/../middleware/Security.php';
 
 $pdo = database();
 $databaseName = (string) $pdo->query('SELECT DATABASE()')->fetchColumn();
@@ -126,6 +127,37 @@ $accessoryCategory = $productModel->getCategoryBySlug('phu-kien');
 check($accessoryCategory !== false, 'Tìm được danh mục Phụ kiện bằng slug');
 $filteredAccessories = $productModel->searchProducts(['q' => '', 'category_id' => (int) $accessoryCategory['id'], 'sort' => '', 'limit' => 20, 'offset' => 0]);
 check(count($filteredAccessories) === 6, 'Lọc danh mục Phụ kiện trả đủ 6 sản phẩm');
+
+$safeDescription = Security::sanitizeRichText('<p onclick="alert(1)">Mô tả <strong>an toàn</strong><script>alert(1)</script></p>');
+check(
+    $safeDescription === '<p>Mô tả <strong>an toàn</strong>alert(1)</p>',
+    'Editor loại bỏ script và thuộc tính HTML nguy hiểm'
+);
+
+$uploadProductData = [
+    'category_id' => (int) $accessoryCategory['id'],
+    'name' => 'Sản phẩm kiểm thử upload',
+    'slug' => 'san-pham-kiem-thu-upload',
+    'price' => 100000,
+    'stock' => 5,
+    'description' => '<p>Mô tả <strong>có định dạng</strong></p>',
+    'status' => 1,
+];
+$uploadProductId = $productModel->insertProduct($uploadProductData, ['upload-test-a.jpg', 'upload-test-b.png']);
+$uploadImages = $productModel->getProductImages($uploadProductId);
+check(count($uploadImages) === 2, 'Lưu được nhiều ảnh cho một sản phẩm');
+check(array_sum(array_map('intval', array_column($uploadImages, 'is_primary'))) === 1, 'Gallery chỉ có một ảnh đại diện');
+$deletedUploadPaths = $productModel->updateProduct(
+    $uploadProductId,
+    $uploadProductData,
+    ['upload-test-c.webp'],
+    [(int) $uploadImages[0]['id']]
+);
+check($deletedUploadPaths === ['upload-test-a.jpg'], 'Xóa đúng ảnh được chọn khi cập nhật sản phẩm');
+$updatedUploadImages = $productModel->getProductImages($uploadProductId);
+check(count($updatedUploadImages) === 2, 'Có thể xóa ảnh cũ và thêm ảnh mới trong cùng lần cập nhật');
+check(array_sum(array_map('intval', array_column($updatedUploadImages, 'is_primary'))) === 1, 'Tự chọn lại ảnh đại diện sau khi xóa ảnh chính');
+$productModel->deleteProduct($uploadProductId);
 
 $users = new User($pdo);
 $users->updateName((int) $customer['id'], 'Khách đã cập nhật');

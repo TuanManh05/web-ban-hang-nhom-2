@@ -7,6 +7,7 @@
     <!-- Bootstrap 5 CSS & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/admin-editor.css">
 </head>
 <body class="bg-light py-4">
 <div class="container" style="max-width: 700px;">
@@ -32,7 +33,7 @@
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
             <!-- Form gửi về action product-store -->
-            <form action="index.php?action=product-store" method="POST">
+            <form action="index.php?action=product-store" method="POST" enctype="multipart/form-data">
                 <?= Security::csrfField() ?>
                 <div class="mb-3">
                     <label for="name" class="form-label fw-bold">Tên sản phẩm <span class="text-danger">*</span></label>
@@ -63,10 +64,26 @@
                     </div>
                 </div>
 
-                <!-- Thêm trường Mô tả sản phẩm (Description) -->
                 <div class="mb-3">
-                    <label for="description" class="form-label fw-bold">Mô tả sản phẩm</label>
-                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="Nhập chi tiết mô tả về sản phẩm..."><?= htmlspecialchars($_POST['description'] ?? '') ?></textarea>
+                    <label for="descriptionEditor" class="form-label fw-bold">Mô tả sản phẩm</label>
+                    <div class="rich-editor-toolbar" data-editor-toolbar="descriptionEditor" aria-label="Công cụ định dạng mô tả">
+                        <button type="button" data-command="bold" title="In đậm"><strong>B</strong></button>
+                        <button type="button" data-command="italic" title="In nghiêng"><em>I</em></button>
+                        <button type="button" data-command="underline" title="Gạch chân"><u>U</u></button>
+                        <button type="button" data-command="insertUnorderedList" title="Danh sách">• Danh sách</button>
+                        <button type="button" data-command="formatBlock" data-value="h3" title="Tiêu đề">H3</button>
+                        <button type="button" data-command="removeFormat" title="Xóa định dạng">Xóa định dạng</button>
+                    </div>
+                    <div id="descriptionEditor" class="form-control rich-text-editor" contenteditable="true" role="textbox" aria-multiline="true" data-editor-for="description"><?= Security::renderRichText((string) ($_POST['description'] ?? '')) ?></div>
+                    <textarea class="d-none" id="description" name="description"><?= htmlspecialchars((string) ($_POST['description'] ?? ''), ENT_QUOTES, 'UTF-8') ?></textarea>
+                    <div class="form-text">Có thể định dạng tiêu đề, chữ đậm, chữ nghiêng và danh sách.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="images" class="form-label fw-bold">Hình ảnh sản phẩm</label>
+                    <input class="form-control" type="file" id="images" name="images[]" accept="image/jpeg,image/png,image/webp" multiple data-image-input data-preview-target="imagePreview">
+                    <div class="form-text">Chọn tối đa 5 ảnh JPG, PNG hoặc WEBP; mỗi ảnh không quá 5 MB. Ảnh đầu tiên sẽ là ảnh đại diện.</div>
+                    <div id="imagePreview" class="image-upload-preview mt-3" aria-live="polite"></div>
                 </div>
 
                 <div class="mb-3">
@@ -89,5 +106,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/rich-text-editor.js"></script>
+<script src="assets/js/image-upload-preview.js"></script>
 </body>
 </html>

@@ -20,9 +20,12 @@ final class Security
     public static function startSession(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
+            ini_set('session.use_strict_mode', '1');
+            $isHttps = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
             session_set_cookie_params([
                 'lifetime' => 0,
                 'path' => '/',
+                'secure' => $isHttps,
                 'httponly' => true,
                 'samesite' => 'Lax',
             ]);
@@ -107,5 +110,29 @@ final class Security
             http_response_code(405);
             exit('Phương thức không được hỗ trợ.');
         }
+    }
+
+    /**
+     * Chỉ giữ lại một tập thẻ định dạng an toàn cho trình soạn thảo mô tả.
+     * Thuộc tính HTML bị loại bỏ để không thể chèn script hoặc event handler.
+     */
+    public static function sanitizeRichText(string $html): string
+    {
+        $allowedTags = '<p><div><br><strong><b><em><i><u><ul><ol><li><h2><h3><blockquote>';
+        $clean = strip_tags(trim($html), $allowedTags);
+        $clean = preg_replace('/<([a-z][a-z0-9]*)\b[^>]*>/i', '<$1>', $clean) ?? '';
+
+        return trim($clean);
+    }
+
+    /** Trả về HTML an toàn để hiển thị mô tả cũ dạng text hoặc nội dung editor. */
+    public static function renderRichText(string $content): string
+    {
+        $clean = self::sanitizeRichText($content);
+        if ($clean === strip_tags($clean)) {
+            return nl2br(htmlspecialchars($clean, ENT_QUOTES, 'UTF-8'));
+        }
+
+        return $clean;
     }
 }

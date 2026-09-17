@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/Product.php';
+require_once __DIR__ . '/../middleware/Security.php';
 
 /**
  * Quản lý giỏ hàng lưu trong session.
@@ -15,9 +16,7 @@ final class Cart
     /** Đảm bảo session đã khởi động và key giỏ hàng tồn tại */
     private static function ensureSession(): void
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        Security::startSession();
         if (!isset($_SESSION[self::SESSION_KEY]) || !is_array($_SESSION[self::SESSION_KEY])) {
             $_SESSION[self::SESSION_KEY] = [];
         }
