@@ -44,3 +44,15 @@ Các ảnh phụ kiện bổ sung được lấy từ [Pexels](https://www.pexel
 - Tay cầm chơi game: `12410982`, `14740027`, `5961235`.
 
 Tham khảo điều khoản sử dụng tại [Pexels License](https://www.pexels.com/license/).
+
+## Ảnh linh kiện
+
+Ba ảnh linh kiện được lấy từ các trang sản phẩm tương ứng của
+[Tin Học Ngôi Sao](https://tinhocngoisao.com/) để minh họa cho đồ án học tập:
+
+- `product-component-ssd-patriot-p300-512gb.jpg`: [SSD Patriot P300 512GB](https://tinhocngoisao.com/products/o-cung-ssd-512gb-patriot-p300-m2-2280-nvme-p300p512gm28).
+- `product-component-ram-sstc-8gb-3200.png`: [RAM SSTC 8GB DDR4 3200MHz](https://tinhocngoisao.com/products/ram-4-8g-bus-3200-sstc-amd-intel-u3200a-c22-8gb).
+- `product-component-ram-vsp-16gb-3200.jpg`: [RAM VSP 16GB DDR4 3200MHz](https://tinhocngoisao.com/products/ram-4-vsp-16g-bus-3200-intel-amd-ddr4-16gddr0172).
+
+Khi triển khai công khai hoặc thương mại, cần thay bằng ảnh do nhóm sở hữu
+hoặc đã được cấp quyền sử dụng.

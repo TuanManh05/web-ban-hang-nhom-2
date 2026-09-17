@@ -9,6 +9,7 @@ final class HomeController
     public function index(): void
     {
         $products = Product::featured(8);
+        $featuredCategories = Product::featuredCategories();
 
         require __DIR__ . '/../views/home.php';
     }

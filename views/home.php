@@ -1,17 +1,35 @@
 <?php require __DIR__ . '/partials/header.php'; ?>
 
+<?php
+$categoryPresentation = [
+    'pc-gaming' => ['icon' => '🖥', 'label' => 'PC Gaming'],
+    'laptop' => ['icon' => '▰', 'label' => 'Laptop'],
+    'linh-kien' => ['icon' => '▣', 'label' => 'Linh kiện'],
+    'phu-kien' => ['icon' => '⌨', 'label' => 'Gaming Gear'],
+    'dien-thoai' => ['icon' => '▣', 'label' => 'Điện thoại'],
+    'may-anh' => ['icon' => '▤', 'label' => 'Máy ảnh'],
+];
+?>
+
 <section class="home-shell">
     <div class="container py-3 py-lg-4">
         <div class="hero-layout">
             <aside class="home-categories">
                 <h2><span>☰</span> Danh mục nổi bật</h2>
-                <a href="<?= $basePath ?>/views/products.php?category=pc-gaming"><span>🖥</span> PC Gaming <b>›</b></a>
-                <a href="<?= $basePath ?>/views/products.php?category=laptop"><span>▰</span> Laptop <b>›</b></a>
-                <a href="<?= $basePath ?>/views/products.php?q=CPU"><span>▣</span> CPU - Bộ vi xử lý <b>›</b></a>
-                <a href="<?= $basePath ?>/views/products.php?q=VGA"><span>▤</span> VGA - Card màn hình <b>›</b></a>
-                <a href="<?= $basePath ?>/views/products.php?q=RAM"><span>▥</span> RAM - Bộ nhớ <b>›</b></a>
-                <a href="<?= $basePath ?>/views/products.php?q=SSD"><span>▱</span> SSD - Ổ cứng <b>›</b></a>
-                <a href="<?= $basePath ?>/views/products.php?category=phu-kien"><span>⌨</span> Gaming Gear <b>›</b></a>
+                <?php foreach ($featuredCategories as $category): ?>
+                    <?php
+                    $slug = (string) $category['slug'];
+                    $presentation = $categoryPresentation[$slug] ?? [
+                        'icon' => '▦',
+                        'label' => (string) $category['name'],
+                    ];
+                    ?>
+                    <a href="<?= $basePath ?>/views/products.php?category=<?= urlencode($slug) ?>">
+                        <span><?= htmlspecialchars($presentation['icon'], ENT_QUOTES, 'UTF-8') ?></span>
+                        <?= htmlspecialchars($presentation['label'], ENT_QUOTES, 'UTF-8') ?>
+                        <b>›</b>
+                    </a>
+                <?php endforeach; ?>
             </aside>
 
             <div class="main-promo">
@@ -94,7 +112,7 @@
     <div class="category-showcase">
         <div><span>🖥</span><strong>PC Gaming</strong><a href="<?= $basePath ?>/views/products.php?category=pc-gaming">Xem sản phẩm</a></div>
         <div><span>▰</span><strong>Laptop</strong><a href="<?= $basePath ?>/views/products.php?category=laptop">Xem sản phẩm</a></div>
-        <div><span>▣</span><strong>Linh kiện</strong><a href="<?= $basePath ?>/views/products.php?q=CPU">Xem sản phẩm</a></div>
+        <div><span>▣</span><strong>Linh kiện</strong><a href="<?= $basePath ?>/views/products.php?category=linh-kien">Xem sản phẩm</a></div>
         <div><span>⌨</span><strong>Phụ kiện</strong><a href="<?= $basePath ?>/views/products.php?category=phu-kien">Xem sản phẩm</a></div>
     </div>
 </section>

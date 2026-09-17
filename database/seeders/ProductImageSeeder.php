@@ -59,6 +59,15 @@ final class ProductImageSeeder
             'product-controller-02.jpg',
             'product-controller-03.jpg',
         ],
+        'component-ssd-patriot-p300-512gb' => [
+            'product-component-ssd-patriot-p300-512gb.jpg',
+        ],
+        'component-ram-sstc-8gb-3200' => [
+            'product-component-ram-sstc-8gb-3200.png',
+        ],
+        'component-ram-vsp-16gb-3200' => [
+            'product-component-ram-vsp-16gb-3200.jpg',
+        ],
     ];
 
     /** Ảnh đại diện được chọn riêng để khớp sát nhất với tên từng sản phẩm. */
@@ -84,6 +93,9 @@ final class ProductImageSeeder
         'chuot-gaming-rgb-co-day' => 'product-mouse-01.jpg',
         'ban-phim-co-gaming-rgb' => 'product-keyboard-02.jpg',
         'tay-cam-choi-game-khong-day' => 'product-controller-03.jpg',
+        'ssd-patriot-p300-512gb' => 'product-component-ssd-patriot-p300-512gb.jpg',
+        'ram-sstc-8gb-ddr4-3200' => 'product-component-ram-sstc-8gb-3200.png',
+        'ram-vsp-16gb-ddr4-3200' => 'product-component-ram-vsp-16gb-3200.jpg',
     ];
 
     public function __construct(private PDO $pdo)
@@ -91,7 +103,7 @@ final class ProductImageSeeder
     }
 
     /**
-     * Gắn ba ảnh đúng nhóm sản phẩm. Ảnh người dùng tự tải lên luôn được giữ lại.
+     * Gắn ảnh đúng nhóm sản phẩm. Ảnh người dùng tự tải lên luôn được giữ lại.
      */
     public function run(): void
     {
@@ -131,7 +143,9 @@ final class ProductImageSeeder
                 $existingImages = [];
             }
 
-            if (count($existingImages) >= 3) {
+            $categorySlug = (string) ($product['category_slug'] ?? '');
+            $desiredImageCount = $categorySlug === 'linh-kien' ? 1 : 3;
+            if (count($existingImages) >= $desiredImageCount) {
                 continue;
             }
 
@@ -140,7 +154,6 @@ final class ProductImageSeeder
                 static fn (array $image): int => (int) $image['is_primary'],
                 $existingImages
             )) > 0;
-            $categorySlug = (string) ($product['category_slug'] ?? '');
             $productSlug = (string) ($product['slug'] ?? '');
             $poolKey = match (true) {
                 $productSlug === 'pc-gaming-yasuo' => 'pc-yasuo',
@@ -149,6 +162,9 @@ final class ProductImageSeeder
                 str_starts_with($productSlug, 'chuot-gaming-') => 'chuot-gaming',
                 str_starts_with($productSlug, 'ban-phim-') => 'ban-phim',
                 str_starts_with($productSlug, 'tay-cam-') => 'tay-cam',
+                $productSlug === 'ssd-patriot-p300-512gb' => 'component-ssd-patriot-p300-512gb',
+                $productSlug === 'ram-sstc-8gb-ddr4-3200' => 'component-ram-sstc-8gb-3200',
+                $productSlug === 'ram-vsp-16gb-ddr4-3200' => 'component-ram-vsp-16gb-3200',
                 default => $categorySlug,
             };
             $pool = self::IMAGE_POOLS[$poolKey] ?? self::IMAGE_POOLS['phu-kien'];
@@ -160,7 +176,7 @@ final class ProductImageSeeder
                 $startIndex = ($index * 2) % count($pool);
             }
 
-            for ($offset = 0; count($existingPaths) < 3 && $offset < count($pool); $offset++) {
+            for ($offset = 0; count($existingPaths) < $desiredImageCount && $offset < count($pool); $offset++) {
                 $imagePath = $pool[($startIndex + $offset) % count($pool)];
                 if (in_array($imagePath, $existingPaths, true)) {
                     continue;

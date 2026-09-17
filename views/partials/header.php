@@ -15,7 +15,10 @@ $cartCount = Cart::getTotalQuantity();
 
 $currentPath = str_replace('\\', '/', $_SERVER['PHP_SELF'] ?? '');
 $isHome = str_ends_with($currentPath, '/index.php') && (($_GET['action'] ?? 'home') === 'home');
-$isProducts = str_ends_with($currentPath, '/products.php');
+$isCatalogPage = str_ends_with($currentPath, '/products.php');
+$activeCategory = $isCatalogPage ? trim((string) ($_GET['category'] ?? '')) : '';
+$activeSort = $isCatalogPage ? trim((string) ($_GET['sort'] ?? '')) : '';
+$isProducts = $isCatalogPage && $activeCategory === '' && $activeSort !== 'price_asc';
 ?>
 <!doctype html>
 <html lang="vi">
@@ -96,10 +99,11 @@ $isProducts = str_ends_with($currentPath, '/products.php');
             <div class="quick-links">
                 <a class="<?= $isHome ? 'active' : '' ?>" href="<?= $basePath ?>/index.php">Trang chủ</a>
                 <a class="<?= $isProducts ? 'active' : '' ?>" href="<?= $basePath ?>/views/products.php">Sản phẩm</a>
-                <a href="<?= $basePath ?>/views/products.php?category=laptop">Laptop</a>
-                <a href="<?= $basePath ?>/views/products.php?category=pc-gaming">PC Gaming</a>
-                <a href="<?= $basePath ?>/views/products.php?category=phu-kien">Phụ kiện</a>
-                <a href="<?= $basePath ?>/views/products.php?sort=price_asc">Giá tốt</a>
+                <a class="<?= $isCatalogPage && $activeCategory === 'laptop' ? 'active' : '' ?>" href="<?= $basePath ?>/views/products.php?category=laptop">Laptop</a>
+                <a class="<?= $isCatalogPage && $activeCategory === 'pc-gaming' ? 'active' : '' ?>" href="<?= $basePath ?>/views/products.php?category=pc-gaming">PC Gaming</a>
+                <a class="<?= $isCatalogPage && $activeCategory === 'linh-kien' ? 'active' : '' ?>" href="<?= $basePath ?>/views/products.php?category=linh-kien">Linh kiện</a>
+                <a class="<?= $isCatalogPage && $activeCategory === 'phu-kien' ? 'active' : '' ?>" href="<?= $basePath ?>/views/products.php?category=phu-kien">Phụ kiện</a>
+                <a class="<?= $isCatalogPage && $activeSort === 'price_asc' ? 'active' : '' ?>" href="<?= $basePath ?>/views/products.php?sort=price_asc">Giá tốt</a>
             </div>
         </div>
     </nav>
